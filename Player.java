@@ -11,7 +11,7 @@ public class Player{
     private Color playerColor;
     private int money;
     private String name;
-    private int position;
+    private int position; //
     private Property[] playerProperties;
 
     public Player(String name, Color color) {
