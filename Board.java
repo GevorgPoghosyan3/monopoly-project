@@ -4,7 +4,7 @@
  */
 public class Board{
 
-    public final int BOARD_SIZE = 40;
+    public static final int BOARD_SIZE = 40;
     private Property[] properties = new Property[BOARD_SIZE];
 
     public Board() {};
