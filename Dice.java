@@ -25,3 +25,4 @@ public class Dice {
             return "Die 1: " + die1 + ", Die 2: " + die2;
         }
     }
+//

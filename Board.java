@@ -51,7 +51,7 @@ public class Board {
         }
         public static Property propertyAt ( int p){
             return properties[p];
-        }
+        } //
 
 
     }
