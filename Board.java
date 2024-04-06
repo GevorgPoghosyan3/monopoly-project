@@ -4,5 +4,17 @@
  */
 public class Board{
 
+    public final int BOARD_SIZE = 40;
+    private Property[] properties = new Property[BOARD_SIZE];
+
+    public Board() {};
+
+    public Property propertyAt(int p) {
+        return properties[p];
+    }
+
+
+
+
 
 }
