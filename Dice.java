@@ -1,9 +1,8 @@
 /**
  * Represents a pair of dice used in the Monopoly game to roll.
  */
-
-public class Dice {
 import java.util.Random;
+public class Dice {
 
     public class TwoDice {
         private int die1;
