@@ -5,18 +5,26 @@ public class Property{
 
     private String name;
     private Player owner = null;
-    private int costOfProperty;
+    private double propertyPrice;
+
+    private PropertyType propertyType;
     public enum PropertyType {
-        BROWN, WHITE, PINK, ORANGE, RED, YELLOW, GREEN, BLUE
+        BROWN, LIGHT_BLUE, PINK, ORANGE, RED, YELLOW, GREEN, BLUE, RAILROAD, UTILITY, SPECIAL
     };
 
+
+    public Property(String name, double propertyPrice, PropertyType propertyType){
+        this.name = name;
+        this.propertyPrice = propertyPrice;
+        this.propertyType = propertyType;
+    }
     public Property() {
 
     }
 
     public Property(Property other) {
         this.setName(other.name);
-        this.setCostOfProperty(other.costOfProperty);
+        this.setPropertyPrice(other.getPropertyPrice());
         this.setOwner(other.owner);
     }
 
@@ -24,27 +32,27 @@ public class Property{
         return this.name;
     }
 
-    public int getCostOfProperty() {
-        return this.costOfProperty;
+    public double getPropertyPrice() {
+        return this.propertyPrice;
     }
 
     public Player getOwner() {
         return new Player(this.owner);
     }
 
-    public void setName(String otherName) {
-        this.name = otherName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setCostOfProperty(int otherCostOfProperty) {
-        this.costOfProperty = otherCostOfProperty;
+    public void setPropertyPrice(double propertyPrice) {
+        this.propertyPrice = propertyPrice;
     }
 
     public void setOwner(Player otherOwner) {
         this.owner = new Player(otherOwner);
     }
 
-    public Property[] appendToArray(Property[] properties, Property prop) {
+    public static Property[] appendToArray(Property[] properties, Property prop) {
         Property[] newArr = new Property[properties.length + 1];
 
         for (int i = 0; i < properties.length; i++) {
@@ -55,6 +63,7 @@ public class Property{
 
         return newArr;
     }
+    //
 
 
 }
