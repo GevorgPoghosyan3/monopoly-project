@@ -17,7 +17,7 @@ public class Player{
     public Player(String name, Color color) {
         this.money = 1500;
         this.name = name;
-        this.color = color;
+        this.playerColor = color;
         this.position = 0;
         this.playerProperties = new Property[0];
     }
