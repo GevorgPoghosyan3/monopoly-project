@@ -5,19 +5,40 @@
 
 public class Player{
     public enum Color{
-        RED, GREEN, BLUE, YELLOW, PURPLE, BLACK, WHITE, PINK;
+        BROWN, WHITE, PINK, ORANGE, RED, YELLOW, GREEN, BLUE;
     }
+
     private Color playerColor;
     private int money;
+    private String name;
+    private int position;
+    private Property[] playerProperties;
 
-    public Player(){
+    public Player(String name, Color color) {
         this.money = 1500;
-        playerColor = Color.(int)Math.random() * 8 + 1;
+        this.name = name;
+        this.color = color;
+        this.position = 0;
+        this.playerProperties = new Property[0];
     }
     public int getMoney(){
         return this.money;
     }
-    void move(int numSpaces);
+
+    public void setMoney(int money){
+        this.money = money;
+    }
+
+    public void buyProperty(int p){
+        this.money = this.money - getPropertyPrice(propertyAt(p));
+        this.playerProperties = appendToArray(propertyAt(p));
+        propertyAt(p).setOwner = this;
+
+    }
+    public void move(int numSpaces){
+        this.position + Dice.getTotal();
+    }
+
 
     void moveTo(int pos);
 
