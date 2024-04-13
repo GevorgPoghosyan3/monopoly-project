@@ -1,69 +1,78 @@
-/**
- * Represents a property on the Monopoly game board with attributes such as name, price, rent, and owner.
- */
-public class Property{
+public class Property extends Tile implements FeeChangeable{
 
-    private String name;
-    private Player owner = null;
-    private double propertyPrice;
+    @Override
+    public void performAction(Player player, Board board) {
+        return;
+    }
 
-    private PropertyType propertyType;
     public enum PropertyType {
-        BROWN, LIGHT_BLUE, PINK, ORANGE, RED, YELLOW, GREEN, BLUE, RAILROAD, UTILITY, SPECIAL
-    };
+        BROWN, LIGHT_BLUE, PINK, ORANGE, RED, YELLOW, GREEN, BLUE
+    }
+
+    private int price;
+    private int rent;
+    private int level1Fee;
+    private int level2Fee;
+    private int level3Fee;
+    private int mortgage;
+
+    private int numberOfHouses = 0;
+    private PropertyType propertyType;
+    private Player owner;
+    private boolean isBuildable = false;
 
 
-    public Property(String name, double propertyPrice, PropertyType propertyType){
-        this.name = name;
-        this.propertyPrice = propertyPrice;
+//    public void upgrade(){
+//        if(owner.canBuildOn(this)){
+//            numberOfHouses++;
+//            owner.setMoney(owner.getMoney() - );
+//        }
+//    }
+
+
+    public Property(String name, int price, int rent, int level1Fee, int level2Fee, int level3Fee, int mortgage, PropertyType propertyType, boolean isBuildable) {
+        super(name);
+        this.price = price;
+        this.rent = rent;
+        this.level1Fee = level1Fee;
+        this.level2Fee = level2Fee;
+        this.level3Fee = level3Fee;
+        this.mortgage = mortgage;
         this.propertyType = propertyType;
-    }
-    public Property() {
-
-    }
-
-    public Property(Property other) {
-        this.setName(other.name);
-        this.setPropertyPrice(other.getPropertyPrice());
-        this.setOwner(other.owner);
+        this.isBuildable = isBuildable;
+        this.numberOfHouses = 0; // Initially, there are no houses
+        this.owner = null;       // Property is initially not owned
     }
 
-    public String getName() {
-        return this.name;
+
+
+    public int getNumberOfHouses() {
+        return numberOfHouses;
     }
 
-    public double getPropertyPrice() {
-        return this.propertyPrice;
+    public void setNumberOfHouses(int numberOfHouses) {
+        this.numberOfHouses = numberOfHouses;
     }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+
+    public PropertyType getPropertyType() {
+        return propertyType;
+    }
+
 
     public Player getOwner() {
-        return new Player(this.owner);
+        return this.owner;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setOwner(Player player) {
+        this.owner = player;
     }
-
-    public void setPropertyPrice(double propertyPrice) {
-        this.propertyPrice = propertyPrice;
-    }
-
-    public void setOwner(Player otherOwner) {
-        this.owner = new Player(otherOwner);
-    }
-
-    public static Property[] appendToArray(Property[] properties, Property prop) {
-        Property[] newArr = new Property[properties.length + 1];
-
-        for (int i = 0; i < properties.length; i++) {
-            newArr[i] = properties[i];
-        }
-
-        newArr[properties.length + 1] = prop;
-
-        return newArr;
-    }
-    //
-
-
 }
