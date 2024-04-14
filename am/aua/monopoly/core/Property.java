@@ -1,4 +1,6 @@
-public class Property extends Tile implements FeeChangeable{
+package am.aua.monopoly.core;
+
+public class Property extends Tile {
 
     @Override
     public void performAction(Player player, Board board) {
@@ -41,7 +43,7 @@ public class Property extends Tile implements FeeChangeable{
         this.propertyType = propertyType;
         this.isBuildable = isBuildable;
         this.numberOfHouses = 0; // Initially, there are no houses
-        this.owner = null;       // Property is initially not owned
+        this.owner = null;       // am.aua.monopoly.core.Property is initially not owned
     }
 
 

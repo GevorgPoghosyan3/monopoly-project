@@ -1,35 +1,39 @@
+package am.aua.monopoly.core;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Monopoly {
-    private ArrayList<Player> players;
-    Player.Color[] colors = Player.Color.values();
     private int numberOfPLayers;
+    private ArrayList<Player> players;
+    Player.Type[] types = Player.Type.values();
 
 
-    public Monopoly(int numberOfPlayers) throws InvalidGameException{
+    public Monopoly(int numberOfPlayers) throws InvalidNumberOfPlayersException {
+        players = new ArrayList<>();
         if(numberOfPlayers < 2 || numberOfPlayers > 8){
-            throw new InvalidGameException();
+            throw new InvalidNumberOfPlayersException();
         }else this.numberOfPLayers = numberOfPlayers;
     }
 
-    public void setPlayers() {
-        Scanner scanner = new Scanner(System.in);
-        for (int i = 0; i < this.numberOfPLayers; i++) {
+    public void setPlayers(int numberOfPLayers) {
+        for (int i = 0; i < numberOfPLayers; i++) {
             System.out.print("Enter player " + (i + 1) + " name: ");
+            Scanner scanner = new Scanner(System.in);
             String playerName = scanner.nextLine();
 
             // Assign a color to the player using the ordinal of the enum, which is automatically the index
-            players.add(new Player(playerName, colors[i]));
+            players.add(new Player(playerName, types[i]));
         }
     }
 
+
 //    public void startGame() {
-//        System.out.println("Starting Monopoly with " + players.size() + " players.");
+//        System.out.println("Starting am.aua.monopoly.core.Monopoly with " + players.size() + " players.");
 //        boolean gameOver = false;
 //
 //        while (!gameOver) {
-//            Player currentPlayer = players.get(i);
+//            am.aua.monopoly.core.Player currentPlayer = players.get(i);
 //            takeTurn(currentPlayer);
 //            gameOver = checkGameOver();
 //            currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
@@ -37,10 +41,10 @@ public class Monopoly {
 //        System.out.println("Game Over!");
 //    }
 //
-//    private void takeTurn(Player player) {
+//    private void takeTurn(am.aua.monopoly.core.Player player) {
 //        System.out.println(player.getName() + "'s turn with color " + player.getColor());
 //
-//        // Player rolls dice
+//        // am.aua.monopoly.core.Player rolls dice
 //        int rollTotal = dice.roll();
 //        System.out.println(player.getName() + " rolled a " + rollTotal);
 //
@@ -48,7 +52,7 @@ public class Monopoly {
 //        player.move(rollTotal);
 //
 //        // Resolve the tile action
-//        Tile currentTile = board.getTile(player.getPosition());
+//        am.aua.monopoly.core.Tile currentTile = board.getTile(player.getPosition());
 //        currentTile.performAction(player, board);
 //    }
 //

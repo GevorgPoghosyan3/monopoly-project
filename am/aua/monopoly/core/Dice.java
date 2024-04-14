@@ -1,5 +1,7 @@
+package am.aua.monopoly.core;
+
 /**
- * Represents a pair of dice used in the Monopoly game to roll.
+ * Represents a pair of dice used in the am.aua.monopoly.core.Monopoly game to roll.
  */
 public class Dice {
 

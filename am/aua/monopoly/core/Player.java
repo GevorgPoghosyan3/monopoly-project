@@ -1,38 +1,40 @@
+package am.aua.monopoly.core;
+
 import java.util.ArrayList;
 
 /**
- * Represents a player in the Monopoly game with attributes such as name, position, money, and owned properties.
+ * Represents a player in the am.aua.monopoly.core.Monopoly game with attributes such as name, position, money, and owned properties.
  * Methods include moving, buying properties, paying and receiving rent.
  */
 
 public class Player {
-    public enum Color {
-        BROWN, LIGHT_BLUE, PINK, ORANGE, RED, YELLOW, GREEN, BLUE;
+    public enum Type {
+        CAT, CAR, BOOT, IRON, HAT, SHIP, MONEYBAG, BALL;
     }
 
-    private Color playerColor;
+    private Type playerType;
     private double money;
     private String name;
     private int position;
     private ArrayList<Property> playerProperties;
 
-    public Player(String name, Color color) {
+    public Player(String name, Type type) {
         this.money = 1500;
         this.name = name;
-        this.playerColor = color;
+        this.playerType = type;
         this.position = 0;
         this.playerProperties = new ArrayList<>();
     }
 
-//    public Player(Player other) {
+//    public am.aua.monopoly.core.Player(am.aua.monopoly.core.Player other) {
 //        this.money = other.money;
 //        this.name = other.name;
 //        this.playerColor = other.playerColor;
 //        this.position = other.position;
 //        // Since arrays are reference types, we need to deep copy the array
-//        this.playerProperties = new Property[other.playerProperties.length];
+//        this.playerProperties = new am.aua.monopoly.core.Property[other.playerProperties.length];
 //        for (int i = 0; i < other.playerProperties.length; i++) {
-//            this.playerProperties[i] = new Property(other.playerProperties[i].getName());
+//            this.playerProperties[i] = new am.aua.monopoly.core.Property(other.playerProperties[i].getName());
 //        }
 //    }
 
@@ -115,12 +117,12 @@ public class Player {
 //    int getAssets();
 //
 //    /* Input stuff */
-//    boolean inputBool(Monopoly.State state);
+//    boolean inputBool(am.aua.monopoly.core.Monopoly.State state);
 //
-//    int inputInt(Monopoly.State state);
+//    int inputInt(am.aua.monopoly.core.Monopoly.State state);
 //
-//    int inputDecision(Monopoly.State state, String[] choices);
+//    int inputDecision(am.aua.monopoly.core.Monopoly.State state, String[] choices);
 //
-//    Player inputPlayer(Monopoly.State state, Player notAllowed);
+//    am.aua.monopoly.core.Player inputPlayer(am.aua.monopoly.core.Monopoly.State state, am.aua.monopoly.core.Player notAllowed);
 //
 }
