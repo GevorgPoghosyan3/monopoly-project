@@ -23,6 +23,48 @@ public class Property extends Tile {
     private Player owner;
     private boolean isBuildable = false;
 
+    public int getRent() {
+        return rent;
+    }
+
+    public void setRent(int rent) {
+        this.rent = rent;
+    }
+
+    public int getLevel1Fee() {
+        return level1Fee;
+    }
+
+    public void setLevel1Fee(int level1Fee) {
+        this.level1Fee = level1Fee;
+    }
+
+    public int getLevel2Fee() {
+        return level2Fee;
+    }
+
+    public void setLevel2Fee(int level2Fee) {
+        this.level2Fee = level2Fee;
+    }
+
+    public int getLevel3Fee() {
+        return level3Fee;
+    }
+
+    public void setLevel3Fee(int level3Fee) {
+        this.level3Fee = level3Fee;
+    }
+
+    public int getMortgage() {
+        return mortgage;
+    }
+
+    public void setMortgage(int mortgage) {
+        this.mortgage = mortgage;
+    }
+
+
+
 
 //    public void upgrade(){
 //        if(owner.canBuildOn(this)){

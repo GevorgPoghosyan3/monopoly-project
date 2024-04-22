@@ -5,6 +5,11 @@ import java.util.Scanner;
 
 public class Monopoly {
     private int numberOfPLayers;
+
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
     private ArrayList<Player> players;
     Player.Type[] types = Player.Type.values();
 
@@ -14,7 +19,11 @@ public class Monopoly {
         if(numberOfPlayers < 2 || numberOfPlayers > 8){
             throw new InvalidNumberOfPlayersException();
         }else this.numberOfPLayers = numberOfPlayers;
+        Board board = new Board();
+        board.initializeBoard();
     }
+
+
 
     public void setPlayers(int numberOfPLayers) {
         for (int i = 0; i < numberOfPLayers; i++) {
@@ -26,6 +35,8 @@ public class Monopoly {
             players.add(new Player(playerName, types[i]));
         }
     }
+
+
 
 
 //    public void startGame() {
@@ -41,20 +52,7 @@ public class Monopoly {
 //        System.out.println("Game Over!");
 //    }
 //
-//    private void takeTurn(am.aua.monopoly.core.Player player) {
-//        System.out.println(player.getName() + "'s turn with color " + player.getColor());
-//
-//        // am.aua.monopoly.core.Player rolls dice
-//        int rollTotal = dice.roll();
-//        System.out.println(player.getName() + " rolled a " + rollTotal);
-//
-//        // Move the player
-//        player.move(rollTotal);
-//
-//        // Resolve the tile action
-//        am.aua.monopoly.core.Tile currentTile = board.getTile(player.getPosition());
-//        currentTile.performAction(player, board);
-//    }
+
 //
 //    private boolean checkGameOver() {
 //        // Implement logic to check if the game should end, such as one player left with money

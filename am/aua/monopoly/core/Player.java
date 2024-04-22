@@ -8,6 +8,7 @@ import java.util.ArrayList;
  */
 
 public class Player {
+
     public enum Type {
         CAT, CAR, BOOT, IRON, HAT, SHIP, MONEYBAG, BALL;
     }
@@ -15,7 +16,12 @@ public class Player {
     private Type playerType;
     private double money;
     private String name;
+
+
+
     private int position;
+
+
     private ArrayList<Property> playerProperties;
 
     public Player(String name, Type type) {
@@ -38,6 +44,10 @@ public class Player {
 //        }
 //    }
 
+    public Type getType() {
+        return this.playerType;
+    }
+
 
     public double getMoney() {
         return this.money;
@@ -47,6 +57,14 @@ public class Player {
         this.money = money;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
     public void buyProperty(int p) {
         setMoney(this.getMoney() - Board.propertyAt(p).getPrice());
         playerProperties.add(Board.propertyAt(p));
@@ -54,8 +72,13 @@ public class Player {
 
     }
 
-    public void move() {
-        this.position = this.position + Dice.getTotal();
+    public ArrayList<Property> getPlayerProperties() {
+        return playerProperties;
+    }
+
+
+    public void move(int diceRoll) {
+        this.position = this.position + diceRoll;
         if (this.position > Board.BOARD_SIZE) {
             int difference = this.position - Board.BOARD_SIZE;
             this.position = difference;
@@ -80,12 +103,42 @@ public class Player {
         for (int i = 0; i < Board.tiles.size(); i++) {
             if(Board.tiles.get(i).getClass() == Property.class) {
                 Property property = (Property) Board.tiles.get(i);
+                int houses = property.getNumberOfHouses();
                 if(property.getPropertyType() == type && property.getOwner() != owner) {
+                    return false;
+                } else if(property.getPropertyType() == type && property.getOwner() == owner && Math.abs(houses - prop.getNumberOfHouses()) > 1) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    public void build(Property prop) throws InvalidNumberOfHousesException{
+        if(this.canBuildOn(prop)) {
+            int fee = 0;
+            switch (prop.getNumberOfHouses()) {
+                case 0:
+                    fee = prop.getLevel1Fee();
+                    prop.setRent ((int)(prop.getRent() * 1.1));
+                    break;
+                case 1:
+
+                    fee = prop.getLevel2Fee();
+                    prop.setRent ((int)(prop.getRent() * 1.2));
+                    break;
+                case 2:
+                    fee = prop.getLevel3Fee();
+                    prop.setRent ((int)(prop.getRent() * 1.3));
+                    break;
+                default:
+                    throw new InvalidNumberOfHousesException();
+            }
+
+            this.setMoney(this.getMoney() - fee);
+            prop.setNumberOfHouses(prop.getNumberOfHouses() + 1);
+
+        }
     }
 
 

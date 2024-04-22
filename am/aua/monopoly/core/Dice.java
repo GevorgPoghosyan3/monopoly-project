@@ -9,9 +9,9 @@ public class Dice {
         private static int die2;
 
 
-        public static int getTotal() {
-            int die1 = (int) (Math.random() * 6) + 1; // Random number between 1 and 6 for die 1
-            int die2 = (int) (Math.random() * 6) + 1; // Random number between 1 and 6 for die 2
+        public static int roll() {
+             die1 = (int) (Math.random() * 6) + 1; // Random number between 1 and 6 for die 1
+             die2 = (int) (Math.random() * 6) + 1; // Random number between 1 and 6 for die 2
             return die1 + die2;
         }
 
@@ -22,8 +22,8 @@ public class Dice {
         }
 
         // Method to get a String representation of the two dice
-        @Override
-        public String toString() {
+
+        public static String toStringDice() {
             return "Die 1: " + die1 + ", Die 2: " + die2;
         }
 
