@@ -23,6 +23,37 @@ public class Property extends Tile {
     private Player owner;
     private boolean isBuildable = false;
 
+    public Property(String name, int price, int rent, int level1Fee, int level2Fee, int level3Fee, int mortgage, PropertyType propertyType, boolean isBuildable) {
+        super(name);
+        this.price = price;
+        this.rent = rent;
+        this.level1Fee = level1Fee;
+        this.level2Fee = level2Fee;
+        this.level3Fee = level3Fee;
+        this.mortgage = mortgage;
+        this.propertyType = propertyType;
+        this.isBuildable = isBuildable;
+        this.numberOfHouses = 0; // Initially, there are no houses
+        this.owner = null;       // am.aua.monopoly.core.Property is initially not owned
+    }
+
+    public Property(Property other) {
+        super(other.getName());
+
+
+        this.price = other.price;
+        this.rent = other.rent;
+        this.level1Fee = other.level1Fee;
+        this.level2Fee = other.level2Fee;
+        this.level3Fee = other.level3Fee;
+        this.mortgage = other.mortgage;
+        this.numberOfHouses = other.numberOfHouses;
+        this.propertyType = other.propertyType;
+
+        this.owner = (other.owner != null) ? new Player(other.owner) : null;
+
+        this.isBuildable = other.isBuildable;
+    }
     public int getRent() {
         return rent;
     }
@@ -74,19 +105,7 @@ public class Property extends Tile {
 //    }
 
 
-    public Property(String name, int price, int rent, int level1Fee, int level2Fee, int level3Fee, int mortgage, PropertyType propertyType, boolean isBuildable) {
-        super(name);
-        this.price = price;
-        this.rent = rent;
-        this.level1Fee = level1Fee;
-        this.level2Fee = level2Fee;
-        this.level3Fee = level3Fee;
-        this.mortgage = mortgage;
-        this.propertyType = propertyType;
-        this.isBuildable = isBuildable;
-        this.numberOfHouses = 0; // Initially, there are no houses
-        this.owner = null;       // am.aua.monopoly.core.Property is initially not owned
-    }
+
 
 
 

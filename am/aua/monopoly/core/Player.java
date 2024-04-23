@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class Player {
 
+
     public enum Type {
         CAT, CAR, BOOT, IRON, HAT, SHIP, MONEYBAG, BALL;
     }
@@ -32,7 +33,19 @@ public class Player {
         this.playerProperties = new ArrayList<>();
     }
 
-//    public am.aua.monopoly.core.Player(am.aua.monopoly.core.Player other) {
+    public Player(Player other) {
+        this.playerType = other.playerType;
+        this.money = other.money;
+        this.name = other.name;
+        this.position = other.position;
+        // Deep copy of playerProperties ArrayList
+        this.playerProperties = new ArrayList<>();
+        for (Property property : other.playerProperties) {
+            this.playerProperties.add(new Property(property));
+        }
+    }
+
+    //    public am.aua.monopoly.core.Player(am.aua.monopoly.core.Player other) {
 //        this.money = other.money;
 //        this.name = other.name;
 //        this.playerColor = other.playerColor;
@@ -66,13 +79,24 @@ public class Player {
     }
 
     public void buyProperty(int p) {
-        setMoney(this.getMoney() - Board.propertyAt(p).getPrice());
-        playerProperties.add(Board.propertyAt(p));
-        Board.propertyAt(p).setOwner(this);
+        if(Board.propertyAt(p).getOwner() == null) {
+            setMoney(this.getMoney() - Board.propertyAt(p).getPrice());
+            playerProperties.add(Board.propertyAt(p));
+            Board.propertyAt(p).setOwner(this);
+        } else {
+            System.out.println("This property already has an owner");
+        }
 
     }
 
     public ArrayList<Property> getPlayerProperties() {
+
+//        ArrayList<Property> properties = new ArrayList<>();
+//        for (Property property : this.playerProperties) {
+//            properties.add(new Property(property)); // Assuming Player class has a copy constructor
+//        }
+//        return properties;
+
         return playerProperties;
     }
 
@@ -106,9 +130,11 @@ public class Player {
                 int houses = property.getNumberOfHouses();
                 if(property.getPropertyType() == type && property.getOwner() != owner) {
                     return false;
-                } else if(property.getPropertyType() == type && property.getOwner() == owner && Math.abs(houses - prop.getNumberOfHouses()) > 1) {
-                    return false;
                 }
+
+//                else if(property.getPropertyType() == type && property.getOwner() == owner && Math.abs(houses - prop.getNumberOfHouses()) > 1) {
+//                    return false;
+//                }
             }
         }
         return true;
@@ -121,14 +147,16 @@ public class Player {
                 case 0:
                     fee = prop.getLevel1Fee();
                     prop.setRent ((int)(prop.getRent() * 1.1));
+                    System.out.println("1 house");
                     break;
                 case 1:
-
                     fee = prop.getLevel2Fee();
+                    System.out.println("2 house");
                     prop.setRent ((int)(prop.getRent() * 1.2));
                     break;
                 case 2:
                     fee = prop.getLevel3Fee();
+                    System.out.println("3 house");
                     prop.setRent ((int)(prop.getRent() * 1.3));
                     break;
                 default:

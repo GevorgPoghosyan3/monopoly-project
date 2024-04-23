@@ -15,37 +15,82 @@ public class MonopolyConsole {
         Monopoly monopoly = null;
         try {
             monopoly = new Monopoly(numberOfPLayers);
-            monopoly.setPlayers(numberOfPLayers);
+            monopoly.setPlayers();
         } catch (InvalidNumberOfPlayersException e) {
             System.out.println(e.getMessage());
         }
 
-        int k = 0;
-        Player player = monopoly.getPlayers().get(k);
+        int turn = 0;
+        Player player = monopoly.getPlayers().get(turn);
+
+        Property propa = (Property)Board.tiles.get(0);
+        Property propa1 = (Property)Board.tiles.get(1);
+
+        propa.setOwner(player);
+        propa1.setOwner(player);
+        player.getPlayerProperties().add(propa1);
+        player.getPlayerProperties().add(propa);
+
+
+
         System.out.println(player.getName() + "'s turn with type " + player.getType());
         int rollTotal = 0;
         boolean hasRolled = false;
 
       String inputLine = scanner.nextLine();
 
-        while (!inputLine.equals("I am Bankrupt")) {
-            if (inputLine.equals("R")) {
-                player.move(Dice.roll());
-                System.out.println(Dice.toStringDice());
-                hasRolled = true;
-            } else if (inputLine.equals("Next")) {
-                if(k == monopoly.getPlayers().size() - 1) {
-                    k = 0;
+        while (!inputLine.equals("q")) {
+            if (inputLine.equals("r")) {
+                if(!hasRolled) {
+                    player.move(Dice.roll());
+                    System.out.println(Dice.toStringDice());
+
+                    hasRolled = !Dice.isDouble();
+
+                } else {
+                    System.out.println("You have already rolled the dice");
                 }
-                player =  monopoly.getPlayers().get(++k);
-                System.out.println(player.getName() + "'s turn with type " + player.getType());
+
+            } else if (inputLine.equals("n")) {
+
+                if(hasRolled) {
+                    if(turn == monopoly.getPlayers().size() - 1) {
+                        turn = 0;
+                    } else  {
+                        turn++;
+                        System.out.println("Turn increment");
+                    }
+
+                    player =  monopoly.getPlayers().get(turn);
+                    System.out.println(player.getName() + "'s turn with type " + player.getType());
+                    hasRolled = false;
+
+
+                } else {
+                    System.out.println("You should roll the Dice");
+                }
 
             } else if (inputLine.equals("Buy") && hasRolled) {
                 player.buyProperty(player.getPosition());
             } else if (inputLine.equals("P")) {
                 for(Property prop: player.getPlayerProperties()) {
-                    System.out.println(prop.getName());
+                    System.out.println(prop.getName() + prop.getNumberOfHouses());
                 }
+            } else if(inputLine.equals("Build")) {
+                System.out.print("You properties - > ");
+                for(Property prop: player.getPlayerProperties()) {
+                    System.out.print(prop.getName() + ", ");
+                }
+                System.out.println("Choose the property e.g 1, 2, 3");
+                int property = scanner.nextInt();
+                try {
+                    Property buildProperty = (Property) Board.tiles.get(property);
+                    player.build(buildProperty);
+                    System.out.println( buildProperty.getNumberOfHouses()+ ", on " + buildProperty.getName());
+                } catch (InvalidNumberOfHousesException e) {
+                    System.out.println(e.getMessage());
+                }
+
             }else if (inputLine.equals("Mortgage")) {
                 //Gev u Armen qich boxoqveq gorc areq
             } else if (inputLine.equals("DeMortgage")) {

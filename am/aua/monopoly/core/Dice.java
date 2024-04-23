@@ -17,7 +17,7 @@ public class Dice {
 
 
         // Method to check if the two dice are the same
-        public boolean isDouble() {
+        public static boolean isDouble() {
             return die1 == die2;
         }
 

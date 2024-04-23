@@ -6,10 +6,6 @@ import java.util.Scanner;
 public class Monopoly {
     private int numberOfPLayers;
 
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
-
     private ArrayList<Player> players;
     Player.Type[] types = Player.Type.values();
 
@@ -25,8 +21,8 @@ public class Monopoly {
 
 
 
-    public void setPlayers(int numberOfPLayers) {
-        for (int i = 0; i < numberOfPLayers; i++) {
+    public void setPlayers() {
+        for (int i = 0; i < this.numberOfPLayers; i++) {
             System.out.print("Enter player " + (i + 1) + " name: ");
             Scanner scanner = new Scanner(System.in);
             String playerName = scanner.nextLine();
@@ -36,6 +32,14 @@ public class Monopoly {
         }
     }
 
+
+    public ArrayList<Player> getPlayers() {
+        ArrayList<Player> players = new ArrayList<>();
+        for (Player player : this.players) {
+            players.add(new Player(player)); // Assuming Player class has a copy constructor
+        }
+        return players;
+    }
 
 
 
