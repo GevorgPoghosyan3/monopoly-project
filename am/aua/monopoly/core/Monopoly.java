@@ -34,10 +34,10 @@ public class Monopoly {
 
 
     public ArrayList<Player> getPlayers() {
-        ArrayList<Player> players = new ArrayList<>();
-        for (Player player : this.players) {
-            players.add(new Player(player)); // Assuming Player class has a copy constructor
-        }
+//        ArrayList<Player> players = new ArrayList<>();
+//        for (Player player : this.players) {
+//            players.add(new Player(player)); // Assuming Player class has a copy constructor
+//        }
         return players;
     }
 

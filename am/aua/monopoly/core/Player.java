@@ -19,7 +19,6 @@ public class Player {
     private String name;
 
 
-
     private int position;
 
 
@@ -89,6 +88,11 @@ public class Player {
 
     }
 
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+
     public ArrayList<Property> getPlayerProperties() {
 
 //        ArrayList<Property> properties = new ArrayList<>();
@@ -112,8 +116,25 @@ public class Player {
     }
 
     public void payRent() {
-        Player owner = Board.propertyAt(this.position).getOwner();
-        double propertyTax = Board.propertyAt(this.position).getPrice() * 0.1;
+        Property property =  Board.propertyAt(this.position);
+        Player owner = property.getOwner();
+        int propertyTax = 0;
+        switch (property.getNumberOfHouses()) {
+            case 0:
+                propertyTax = property.getRent();
+                break;
+            case 1:
+                propertyTax = property.getLevel1Fee();
+                break;
+            case 2:
+                propertyTax = property.getLevel2Fee();
+                break;
+            case 3:
+                propertyTax = property.getLevel3Fee();
+                break;
+
+        }
+
         if (owner != null && owner != this) {
             owner.setMoney(owner.getMoney() + propertyTax);
             this.setMoney(this.getMoney() - propertyTax);

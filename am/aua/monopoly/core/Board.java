@@ -13,10 +13,9 @@ public class Board {
     public static ArrayList<Tile> tiles = new ArrayList<>();
 
         public void initializeBoard() {
-                // Special tiles and properties
-//                tiles.add(new GoTile());  // 0
+                tiles.add(new GoTile("GoTile"));  // 0
                 tiles.add(new Property("Mediterranean Avenue", 60, 2, 10, 30, 90, 50, Property.PropertyType.BROWN, true));  // 1
-             //   tiles.add(new CommunityChestTile());  // 2
+            //    tiles.add(new CommunityChestTile("Community Chest Tile"));  // 2
                 tiles.add(new Property("Baltic Avenue", 60, 4, 20, 60, 180, 50, Property.PropertyType.BROWN, true));  // 3
            //     tiles.add(new IncomeTaxTile());  // 4
             //    tiles.add(new Railroad("Reading am.aua.monopoly.core.Railroad"));  // 5
@@ -24,7 +23,7 @@ public class Board {
              //   tiles.add(new ChanceTile());  // 7
                 tiles.add(new Property("Vermont Avenue", 100, 6, 30, 90, 270, 50, Property.PropertyType.LIGHT_BLUE, true));  // 8
                 tiles.add(new Property("Connecticut Avenue", 120, 8, 40, 100, 300, 60, Property.PropertyType.LIGHT_BLUE, true));  // 9
-//                tiles.add(new JailTile());  // 10
+                tiles.add(new GoToJailTile("GoToJail"));  // 30
                 tiles.add(new Property("St. Charles Place", 140, 10, 50, 150, 450, 100, Property.PropertyType.PINK, true));  // 11
             //    tiles.add(new Utility("Electric Company"));  // 12
                 tiles.add(new Property("States Avenue", 140, 10, 50, 150, 450, 100, Property.PropertyType.PINK, true));  // 13
@@ -44,8 +43,8 @@ public class Board {
                 tiles.add(new Property("Ventnor Avenue", 260, 22, 110, 330, 800, 150, Property.PropertyType.YELLOW, true));  // 27
                 //    tiles.add(new Utility("Water Works"));  // 28
                 tiles.add(new Property("Marvin Gardens", 280, 24, 120, 360, 850, 150, Property.PropertyType.YELLOW, true));  // 29
-           //     tiles.add(new GoToJailTile());  // 30
-                tiles.add(new Property("Pacific Avenue", 300, 26, 130, 390, 900, 200, Property.PropertyType.GREEN, true));  // 31
+               tiles.add(new CourtTile("Court"));
+            tiles.add(new Property("Pacific Avenue", 300, 26, 130, 390, 900, 200, Property.PropertyType.GREEN, true));  // 31
                 tiles.add(new Property("North Carolina Avenue", 300, 26, 130, 390, 900, 200, Property.PropertyType.GREEN, true));  // 32
            //     tiles.add(new CommunityChestTile());  // 33
                 tiles.add(new Property("Pennsylvania Avenue", 320, 28, 150, 450, 1000, 200, Property.PropertyType.GREEN, true));  // 34
@@ -63,4 +62,18 @@ public class Board {
                 return (Property) tiles.get(p);
         }
 
+
+
+
+    public class GoTile extends Tile{
+        public GoTile(String name) {
+            super(name);
+        }
+
+        @Override
+        public void performAction(Player player, Board board) {
+            return ;
+        }
     }
+
+}

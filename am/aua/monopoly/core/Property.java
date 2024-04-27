@@ -82,6 +82,15 @@ public class Property extends Tile {
         return level3Fee;
     }
 
+    public static int nameToPosition (String name) {
+        for (int i = 0; i < Board.BOARD_SIZE; i++) {
+            if(name.equals(Board.tiles.get(i).getName())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public void setLevel3Fee(int level3Fee) {
         this.level3Fee = level3Fee;
     }
