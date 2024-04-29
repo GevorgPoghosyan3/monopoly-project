@@ -22,7 +22,7 @@ public class MonopolyConsole {
 
         int turn = 0;
         Player player = monopoly.getPlayers().get(turn);
-
+//
 //        Property propa = (Property)Board.tiles.get(0);
 //        Property propa1 = (Property)Board.tiles.get(1);
 //
@@ -44,7 +44,7 @@ public class MonopolyConsole {
                 System.out.println(player.getMoney());
             if (inputLine.equals("r")) {
                 if(!hasRolled || hasRolledDouble) {
-                    player.move(Dice.roll());
+                    Monopoly.move(player, Dice.roll());
                     System.out.println(Dice.toStringDice());
 
                     hasRolled = true;
@@ -74,7 +74,7 @@ public class MonopolyConsole {
                 }
 
             } else if (inputLine.equals("Buy") && hasRolled) {
-                player.buyProperty(player.getPosition());
+                Monopoly.buyProperty(player, player.getPosition());
             } else if (inputLine.equals("P")) {
                 for(Property prop: player.getPlayerProperties()) {
                     System.out.println(prop.getName() + prop.getNumberOfHouses());
@@ -83,7 +83,7 @@ public class MonopolyConsole {
                 System.out.print("You properties - > ");
                 int sameColor = 0;
                 for(Property prop: player.getPlayerProperties()) {
-                    if(player.canBuildOn(prop)){
+                    if(Monopoly.canBuildOn(prop)){
                     System.out.print(prop.getName() + ", ");
                     sameColor++;
                     }
@@ -93,7 +93,7 @@ public class MonopolyConsole {
                 if(property <= sameColor) {
                     try {
                         Property buildProperty = player.getPlayerProperties().get(property - 1);
-                        player.build(buildProperty);
+                        Monopoly.build(player,buildProperty);
                         System.out.println( buildProperty.getNumberOfHouses()+ ", on " + buildProperty.getName());
                     } catch (InvalidNumberOfHousesException e) {
                         System.out.println(e.getMessage());

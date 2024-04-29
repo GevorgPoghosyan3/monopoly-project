@@ -2,7 +2,6 @@ package am.aua.monopoly.core;
 
 public class Property extends Tile {
 
-    @Override
     public void performAction(Player player, Board board) {
         return;
     }
@@ -39,8 +38,6 @@ public class Property extends Tile {
 
     public Property(Property other) {
         super(other.getName());
-
-
         this.price = other.price;
         this.rent = other.rent;
         this.level1Fee = other.level1Fee;
@@ -66,16 +63,8 @@ public class Property extends Tile {
         return level1Fee;
     }
 
-    public void setLevel1Fee(int level1Fee) {
-        this.level1Fee = level1Fee;
-    }
-
     public int getLevel2Fee() {
         return level2Fee;
-    }
-
-    public void setLevel2Fee(int level2Fee) {
-        this.level2Fee = level2Fee;
     }
 
     public int getLevel3Fee() {
@@ -91,10 +80,6 @@ public class Property extends Tile {
         return -1;
     }
 
-    public void setLevel3Fee(int level3Fee) {
-        this.level3Fee = level3Fee;
-    }
-
     public int getMortgage() {
         return mortgage;
     }
@@ -102,20 +87,6 @@ public class Property extends Tile {
     public void setMortgage(int mortgage) {
         this.mortgage = mortgage;
     }
-
-
-
-
-//    public void upgrade(){
-//        if(owner.canBuildOn(this)){
-//            numberOfHouses++;
-//            owner.setMoney(owner.getMoney() - );
-//        }
-//    }
-
-
-
-
 
 
     public int getNumberOfHouses() {
@@ -128,10 +99,6 @@ public class Property extends Tile {
 
     public int getPrice() {
         return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
     }
 
 

@@ -6,7 +6,7 @@ public class GoToJailTile extends Tile{
         super(name);
     }
 
-    @Override
+
     public void performAction(Player player, Board board) {
         System.out.println(player.getName() + " has been sent to jail.");
         player.setPosition(30);

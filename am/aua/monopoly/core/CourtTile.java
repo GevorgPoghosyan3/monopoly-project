@@ -11,7 +11,7 @@ public class CourtTile extends Tile {
         super(name);
     }
 
-    @Override
+
     public void performAction(Player player, Board board) {
         player.setPosition(Property.nameToPosition("GoToJail"));
     }

@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * Represents a property on the am.aua.monopoly.core.Monopoly game board with attributes such as name, price, rent, and owner.
  */
-public abstract class Tile {
+public class Tile {
     private String name;
 
     // Simplified constructor for new tile creation
@@ -41,8 +41,5 @@ public abstract class Tile {
         }
         return (Objects.equals(this.name, other.name));
     }
-
-
-    public abstract void performAction(Player player, Board board);
 
 }
