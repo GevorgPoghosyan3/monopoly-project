@@ -16,11 +16,11 @@ public class Property extends Tile {
     private int level2Fee;
     private int level3Fee;
     private int mortgage;
-
     private int numberOfHouses = 0;
     private PropertyType propertyType;
     private Player owner;
-    private boolean isBuildable = false;
+    private boolean isBuildable;
+    private boolean isUnderMortgage;
 
     public Property(String name, int price, int rent, int level1Fee, int level2Fee, int level3Fee, int mortgage, PropertyType propertyType, boolean isBuildable) {
         super(name);
@@ -34,6 +34,8 @@ public class Property extends Tile {
         this.isBuildable = isBuildable;
         this.numberOfHouses = 0; // Initially, there are no houses
         this.owner = null;       // am.aua.monopoly.core.Property is initially not owned
+        this.isBuildable = false;
+        this.isUnderMortgage = false;
     }
 
     public Property(Property other) {
@@ -50,6 +52,7 @@ public class Property extends Tile {
         this.owner = (other.owner != null) ? new Player(other.owner) : null;
 
         this.isBuildable = other.isBuildable;
+        this.isUnderMortgage = other.isUnderMortgage;
     }
     public int getRent() {
         return rent;
@@ -114,4 +117,14 @@ public class Property extends Tile {
     public void setOwner(Player player) {
         this.owner = player;
     }
+    public void setIsUnderMortgage(boolean isUnderMortgage){
+        this.isUnderMortgage = isUnderMortgage;
+    }
+    public boolean getIsUnderMortgage(){
+        return isUnderMortgage;
+    }
+    public void setPrice(int price){
+        this.price = price;
+    }
+
 }

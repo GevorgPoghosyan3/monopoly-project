@@ -58,9 +58,9 @@ public class Card {
 
         cards.add(new Card(0, "Advance to Illinois Ave. If you pass Go, don't collect $200.", 0, 24)); // Illinois Ave position
         cards.add(new Card(0, "Advance to St. Charles Place. If you pass Go, don't collect $200.", 0, 11)); // St. Charles Place position// Nearest Utility position// Nearest Railroad position
-        cards.add(new Card(2, "Bank pays you dividend of $50.", 50));
+        cards.add(new Card(1, "Bank pays you dividend of $50.", 50));
         cards.add(new Card(5, "Get out of Jail Free. This card may be kept until needed, or sold.", 0));// Move back 3 spaces
-        cards.add(new Card(3, "Pay poor tax of $15.", -15));
+        cards.add(new Card(1, "Pay poor tax of $15.", -15));
         cards.add(new Card(0, "Take a trip to Reading Railroad. If you pass Go, don't collect $200.", 0, 5)); // Reading Railroad position
         cards.add(new Card(0, "Take a walk on the Boardwalk. Advance token to Boardwalk.", 0, 39)); // Boardwalk position
         cards.add(new Card(3, "You have been elected Chairman of the Board. Pay each player $50.", -50));

@@ -11,15 +11,11 @@ public class Player {
     public enum Type {
         CAT, CAR, BOOT, IRON, HAT, SHIP, MONEYBAG, BALL;
     }
-
     private Type playerType;
-    private double money;
+    private int money;
     private String name;
-
-
+    private boolean isInJail;
     private int position;
-
-
     private ArrayList<Property> playerProperties;
 
     public Player(String name, Type type) {
@@ -28,6 +24,7 @@ public class Player {
         this.playerType = type;
         this.position = 0;
         this.playerProperties = new ArrayList<>();
+        this.isInJail = false;
     }
 
     public Player(Player other) {
@@ -35,6 +32,7 @@ public class Player {
         this.money = other.money;
         this.name = other.name;
         this.position = other.position;
+        this.isInJail = other.isInJail;;
         // Deep copy of playerProperties ArrayList
         this.playerProperties = new ArrayList<>();
         for (Property property : other.playerProperties) {
@@ -48,16 +46,22 @@ public class Player {
     }
 
 
-    public double getMoney() {
+    public int getMoney() {
         return this.money;
     }
 
-    public void setMoney(double money) {
+    public void setMoney(int money) {
         this.money = money;
     }
 
     public String getName() {
         return this.name;
+    }
+    public boolean getIsInJail(){
+        return this.isInJail;
+    }
+    public void setIsInJail(boolean isInJail){
+        this.isInJail = isInJail;
     }
 
     public int getPosition() {
