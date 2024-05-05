@@ -18,6 +18,8 @@ public class Player {
     private int position;
     private ArrayList<Property> playerProperties;
 
+
+
     public Player(String name, Type type) {
         this.money = 1500;
         this.name = name;
@@ -32,8 +34,8 @@ public class Player {
         this.money = other.money;
         this.name = other.name;
         this.position = other.position;
-        this.isInJail = other.isInJail;;
-        // Deep copy of playerProperties ArrayList
+        this.isInJail = other.isInJail;
+
         this.playerProperties = new ArrayList<>();
         for (Property property : other.playerProperties) {
             this.playerProperties.add(new Property(property));
@@ -74,6 +76,10 @@ public class Player {
 
     public ArrayList<Property> getPlayerProperties() {
         return playerProperties;
+    }
+
+    public void removeFromPlayerProperties(Property prop){
+        playerProperties.remove(prop);
     }
 
 }

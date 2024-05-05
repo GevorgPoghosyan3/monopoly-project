@@ -31,7 +31,6 @@ public class Property extends Tile {
         this.level3Fee = level3Fee;
         this.mortgage = mortgage;
         this.propertyType = propertyType;
-        this.isBuildable = isBuildable;
         this.numberOfHouses = 0; // Initially, there are no houses
         this.owner = null;       // am.aua.monopoly.core.Property is initially not owned
         this.isBuildable = false;
