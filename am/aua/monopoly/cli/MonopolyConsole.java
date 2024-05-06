@@ -32,13 +32,13 @@ public class MonopolyConsole {
 
         Player player = monopoly.getTurn();
 
-        Property propa = (Property)Board.tiles.get(1);
-        Property propa1 = (Property)Board.tiles.get(3);
-
-        propa.setOwner(player);
-        propa1.setOwner(player);
-        player.getPlayerProperties().add(propa1);
-        player.getPlayerProperties().add(propa);
+//        Property propa = (Property)Board.tiles.get(1);
+//        Property propa1 = (Property)Board.tiles.get(3);
+//
+//        propa.setOwner(player);
+//        propa1.setOwner(player);
+//        player.getPlayerProperties().add(propa1);
+//        player.getPlayerProperties().add(propa);
 
 
         System.out.println(player.getName() + "'s turn with type " + player.getType());
@@ -46,17 +46,18 @@ public class MonopolyConsole {
         String inputLine = scanner.nextLine();
 
         while (!inputLine.equals("q") && !monopoly.gameOver()) {
+            monopoly.bankrupt(player);
             inputLine = scanner.nextLine();
             System.out.println(player.getMoney());
             System.out.println(player.getPosition());
             if (inputLine.equals("r")) {
-                if(!monopoly.getHasRolled()) {
+                if(!monopoly.getHasRolled() || monopoly.getHasRolledDouble()) {
                     monopoly.move(player, Dice.roll());
                     System.out.println(Dice.toStringDice());
                 }else System.out.println("You have already rolled the dice");
 
             } else if (inputLine.equals("n") ) {
-                if(monopoly.getHasRolled()) {
+                if(monopoly.getHasRolled() && !monopoly.getHasRolledDouble()) {
                     player = monopoly.getTurn();
                     System.out.println(player.getName() + "'s turn with type " + player.getType());
                 }else System.out.println("You should roll the dice.");
@@ -71,13 +72,22 @@ public class MonopolyConsole {
                     }
                 }else System.out.println("You should roll the dice.");
             } else if (inputLine.equals("p")) {
-                if(Monopoly.showProperties(player).size() > 1) {
+                if(!Monopoly.showProperties(player).isEmpty()) {
                     monopoly.print(Monopoly.showProperties(player));
                 }else System.out.println("You don't have properties yet.");
             }else if (inputLine.equals("quit")) {
                 monopoly.leaveTheGame(player);
                 player = monopoly.getTurn();
                 System.out.println(player.getName() + "'s turn with type " + player.getType());
+            }else if (inputLine.equals("sell")) {
+                System.out.print("You properties - > ");
+                monopoly.print(Monopoly.showProperties(player));
+
+                System.out.println("Choose the property e.g 1, 2, 3");
+                int property = scanner.nextInt();
+                if (property <= Monopoly.showProperties(player).size()) {
+                Monopoly.sellProperty(player, Monopoly.showProperties(player).get(property - 1));
+                }
             }
             else if (inputLine.equals("Build")) {
                 System.out.print("You properties - > ");
@@ -126,6 +136,6 @@ public class MonopolyConsole {
 
             }
         }
-        System.out.println("Game Over " + player.getName() + "Won!!!");
+        System.out.println("Game Over " + player.getName() + " Won!!!");
     }
 }

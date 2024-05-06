@@ -17,6 +17,7 @@ public class Monopoly {
     private boolean hasRolled;
     private boolean hasRolledDouble;
     private boolean hasRolledTriple;
+    private boolean playerHasBeenRemoved;
 
 
     public Monopoly(int numberOfPlayers) throws InvalidNumberOfPlayersException {
@@ -63,21 +64,20 @@ public class Monopoly {
 
 
     public static boolean canBuildOn(Property prop) {
-        Property.PropertyType type = prop.getPropertyType();
-        Player owner = prop.getOwner();
+        if (prop.getIsBuildable()) {
+            Property.PropertyType type = prop.getPropertyType();
+            Player owner = prop.getOwner();
 
-        for (int i = 0; i < Board.tiles.size(); i++) {
-            if (Board.tiles.get(i).getClass() == Property.class) {
-                Property property = (Property) Board.tiles.get(i);
-                int houses = property.getNumberOfHouses();
-                if (property.getPropertyType() == type && property.getOwner() != owner) {
-                    return false;
+            for (int i = 0; i < Board.tiles.size(); i++) {
+                if (Board.tiles.get(i).getClass() == Property.class) {
+                    Property property = (Property) Board.tiles.get(i);
+                    if (property.getPropertyType() == type && property.getOwner() != owner) {
+                        return false;
+                    }
                 }
-
-
             }
-        }
-        return true;
+            return true;
+        } else return false;
     }
 
     public static void build(Player player, Property prop) throws InvalidNumberOfHousesException {
@@ -120,12 +120,12 @@ public class Monopoly {
             player.setMoney(player.getMoney() + 200);
         }
 
-        if (player.getPosition() == 2 || player.getPosition() == 7 || player.getPosition() == 17 || player.getPosition() == 33) {
+        if (player.getPosition() == 2 || player.getPosition() == 6 || player.getPosition() == 15 || player.getPosition() == 29) {
             System.out.println(getCard(player));
         } else payRent(player);
 
         hasRolled = true;
-        hasRolledDouble = false;
+        hasRolledDouble = Dice.isDouble();
 
     }
 
@@ -133,22 +133,33 @@ public class Monopoly {
         Property property = Board.propertyAt(player.getPosition());
         if (property != null) {
             Player owner = property.getOwner();
-
             int propertyTax = 0;
-            switch (property.getNumberOfHouses()) {
-                case 0:
-                    propertyTax = property.getRent();
-                    break;
-                case 1:
-                    propertyTax = property.getLevel1Fee();
-                    break;
-                case 2:
-                    propertyTax = property.getLevel2Fee();
-                    break;
-                case 3:
-                    propertyTax = property.getLevel3Fee();
-                    break;
+            int railroadCount = 0;
 
+            if (property.getPropertyType() == Property.PropertyType.RAILROAD) {
+                for (int i = 0; i < player.getPlayerProperties().size(); i++) {
+                    if (player.getPlayerProperties().get(i).getPropertyType() == Property.PropertyType.RAILROAD) {
+                        railroadCount++;
+                    }
+                }
+                propertyTax = railroadCount * property.getRent();
+
+            } else {
+                switch (property.getNumberOfHouses()) {
+                    case 0:
+                        propertyTax = property.getRent();
+                        break;
+                    case 1:
+                        propertyTax = property.getLevel1Fee();
+                        break;
+                    case 2:
+                        propertyTax = property.getLevel2Fee();
+                        break;
+                    case 3:
+                        propertyTax = property.getLevel3Fee();
+                        break;
+
+                }
             }
 
             if (owner != null && owner != player && !property.getIsUnderMortgage()) {
@@ -171,16 +182,17 @@ public class Monopoly {
 
     }
 
-    public static void sellProperty(Player player, Property prop){
+    public static void sellProperty(Player player, Property prop) {
         for (int i = 0; i < player.getPlayerProperties().size(); i++) {
-            if(prop == player.getPlayerProperties().get(i)) {
+            if (prop == player.getPlayerProperties().get(i)) {
                 player.removeFromPlayerProperties(prop);
+                player.setMoney(player.getMoney() + prop.getPrice());
             }
         }
     }
 
     public static String getCard(Player player) {
-        int i = (int) (Math.random() * (cards.size())) + 1;
+        int i = (int) (Math.random() * (cards.size()));
 
         if (cards.get(i).getId() == 1) {
             player.setMoney(player.getMoney() + cards.get(i).getFee());
@@ -199,6 +211,9 @@ public class Monopoly {
             player.setMoney(player.getMoney() + cards.get(i).getFee());
             player.setPosition(cards.get(i).getPosition());
         }
+//        if (cards.get(i).getId() == 5) {
+//          player.setHaveaCard
+//        }
         return cards.get(i).getContent();
     }
 
@@ -231,6 +246,7 @@ public class Monopoly {
             property.setOwner(null);
         }
         players.remove(player);
+        playerHasBeenRemoved = true;
     }
 
     public void bankrupt(Player player) {
@@ -243,7 +259,6 @@ public class Monopoly {
                 mortgageProperties++;
             }
         }
-
 
         if (properties == 0 && playerBudget == 0) {
             leaveTheGame(player);
@@ -262,20 +277,25 @@ public class Monopoly {
 
 
     public Player getTurn() {
-        ++turn;
-        if (turn > players.size() - 1) {
-            turn = 0;
-        }
         hasRolled = false;
         hasRolledDouble = false;
-        return players.get(turn);
 
-}
-    public static ArrayList<Property> showProperties(Player player){
-       return player.getPlayerProperties();
+        if (playerHasBeenRemoved) {
+            turn = turn % players.size();
+            playerHasBeenRemoved = false;
+        } else {
+            turn = (turn + 1) % players.size();
+        }
+
+        return players.get(turn);
     }
 
-    public void print(ArrayList<Property> arrayList){
+
+    public static ArrayList<Property> showProperties(Player player) {
+        return player.getPlayerProperties();
+    }
+
+    public void print(ArrayList<Property> arrayList) {
         for (int i = 0; i < arrayList.size(); i++) {
             System.out.println(arrayList.get(i).getName() + arrayList.get(i).getNumberOfHouses());
         }

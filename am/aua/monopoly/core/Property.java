@@ -7,7 +7,7 @@ public class Property extends Tile {
     }
 
     public enum PropertyType {
-        BROWN, LIGHT_BLUE, PINK, ORANGE, RED, YELLOW, GREEN, BLUE
+        BROWN, LIGHT_BLUE, PINK, ORANGE, RED, YELLOW, GREEN, BLUE, RAILROAD
     }
 
     private int price;
@@ -16,7 +16,7 @@ public class Property extends Tile {
     private int level2Fee;
     private int level3Fee;
     private int mortgage;
-    private int numberOfHouses = 0;
+    private int numberOfHouses;
     private PropertyType propertyType;
     private Player owner;
     private boolean isBuildable;
@@ -33,7 +33,7 @@ public class Property extends Tile {
         this.propertyType = propertyType;
         this.numberOfHouses = 0; // Initially, there are no houses
         this.owner = null;       // am.aua.monopoly.core.Property is initially not owned
-        this.isBuildable = false;
+        this.isBuildable = isBuildable;
         this.isUnderMortgage = false;
     }
 
@@ -124,6 +124,10 @@ public class Property extends Tile {
     }
     public void setPrice(int price){
         this.price = price;
+    }
+
+    public boolean getIsBuildable(){
+        return isBuildable;
     }
 
 }
