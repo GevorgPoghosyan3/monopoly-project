@@ -46,15 +46,30 @@ public class MonopolyConsole {
         String inputLine = scanner.nextLine();
 
         while (!inputLine.equals("q") && !monopoly.gameOver()) {
-            monopoly.bankrupt(player);
+           monopoly.bankrupt(player);
+//            monopoly.goToJail(player);
+//            try {
+//                monopoly.getOutOfJail(player);
+//            } catch (OutOfMoneyException e) {
+//                System.err.println(e.getMessage());
+//            }
             inputLine = scanner.nextLine();
-            System.out.println(player.getMoney());
-            System.out.println(player.getPosition());
             if (inputLine.equals("r")) {
                 if(!monopoly.getHasRolled() || monopoly.getHasRolledDouble()) {
-                    monopoly.move(player, Dice.roll());
+                    try {
+                        monopoly.move(player, Dice.roll());
+//                        Dice.checkSpeeding();
+                    } catch (OutOfMoneyException e) {
+                        System.err.println(e.getMessage());
+                    }
                     System.out.println(Dice.toStringDice());
                 }else System.out.println("You have already rolled the dice");
+
+
+                System.out.println(player.getMoney());
+                System.out.println(Board.tileAt(player.getPosition()).getName());
+
+
 
             } else if (inputLine.equals("n") ) {
                 if(monopoly.getHasRolled() && !monopoly.getHasRolledDouble()) {
@@ -62,14 +77,27 @@ public class MonopolyConsole {
                     System.out.println(player.getName() + "'s turn with type " + player.getType());
                 }else System.out.println("You should roll the dice.");
 
+            }else if (inputLine.equals("teleport") ) {
+                System.out.println("Your properties - > ");
+                monopoly.print(Monopoly.railroadChecker(player));
+
+                System.out.println("Choose the property e.g 1, 2, 3");
+                int property = scanner.nextInt();
+                if (property <= Monopoly.railroadChecker(player).size()) {
+                    try {
+                        monopoly.teleport(player, Monopoly.railroadChecker(player).get(property - 1));
+                    } catch (InvalidTeleportLocationException e) {
+                        System.err.println(e.getMessage());
+                    }
+                }
             }
             else if (inputLine.equals("Buy")) {
                 if(monopoly.getHasRolled()) {
-                    try {
-                        Monopoly.buyProperty(player, player.getPosition());
-                    } catch (InvalidPurchaseException e) {
-                        System.err.println(e.getMessage());
-                    }
+                        try {
+                            Monopoly.buyProperty(player, player.getPosition());
+                        } catch (OutOfMoneyException | InvalidPurchaseException e ) {
+                            System.err.println(e.getMessage());
+                        }
                 }else System.out.println("You should roll the dice.");
             } else if (inputLine.equals("p")) {
                 if(!Monopoly.showProperties(player).isEmpty()) {
@@ -80,17 +108,21 @@ public class MonopolyConsole {
                 player = monopoly.getTurn();
                 System.out.println(player.getName() + "'s turn with type " + player.getType());
             }else if (inputLine.equals("sell")) {
-                System.out.print("You properties - > ");
+                System.out.println("You properties - > ");
                 monopoly.print(Monopoly.showProperties(player));
 
                 System.out.println("Choose the property e.g 1, 2, 3");
                 int property = scanner.nextInt();
                 if (property <= Monopoly.showProperties(player).size()) {
-                Monopoly.sellProperty(player, Monopoly.showProperties(player).get(property - 1));
+                    try {
+                        Monopoly.sellProperty(player, Monopoly.showProperties(player).get(property - 1));
+                    } catch (OutOfMoneyException e) {
+                        System.err.println(e.getMessage());
+                    }
                 }
             }
             else if (inputLine.equals("Build")) {
-                System.out.print("You properties - > ");
+                System.out.println("You properties - > ");
                 monopoly.print(Monopoly.checkSameColorProps(player));
 
                 System.out.println("Choose the property e.g 1, 2, 3");
@@ -101,8 +133,8 @@ public class MonopolyConsole {
                         buildProperty = Monopoly.checkSameColorProps(player).get(property - 1);
                         Monopoly.build(player, buildProperty);
                         System.out.println(buildProperty.getNumberOfHouses() + ", on " + buildProperty.getName());
-                    } catch (InvalidNumberOfHousesException e) {
-                        System.out.println(e.getMessage());
+                    } catch (InvalidNumberOfHousesException | OutOfMoneyException e) {
+                        System.err.println(e.getMessage());
                     }
                 } else {
                     System.out.println("There is no " + property + " th property");
@@ -110,7 +142,7 @@ public class MonopolyConsole {
 
 
             } else if (inputLine.equals("m")) {
-                System.out.print("You properties - > ");
+                System.out.println("You properties - > ");
                 monopoly.print(Monopoly.checkNotUnderMortgage(player));
 
                 System.out.println("Choose the property e.g 1, 2, 3");
@@ -118,23 +150,32 @@ public class MonopolyConsole {
 
                 if(property <= Monopoly.checkNotUnderMortgage(player).size()) {
                     Property mortgageProperty = player.getPlayerProperties().get(property - 1);
-                    Monopoly.putUnderMortgage(player, mortgageProperty);
+                    try {
+                        Monopoly.putUnderMortgage(player, mortgageProperty);
+                    } catch (OutOfMoneyException e) {
+                        System.out.println(e.getMessage());
+                    }
                     System.out.println(mortgageProperty.getName() + ", put under mortgage, you got " + mortgageProperty.getPrice() + "$");
                 }
 
             } else if (inputLine.equals("dm")) {
-                System.out.print("properties under mortgage - > ");
+                System.out.println("properties under mortgage - > ");
                 monopoly.print(Monopoly.checkUnderMortgage(player));
                 System.out.println("Choose the property e.g 1, 2, 3");
                 int property = scanner.nextInt();
 
                 if(property <= Monopoly.checkUnderMortgage(player).size()) {
                     Property mortgageProperty = player.getPlayerProperties().get(property - 1);
-                    Monopoly.deMortgage(player, mortgageProperty);
+                    try {
+                        Monopoly.deMortgage(player, mortgageProperty);
+                    } catch (OutOfMoneyException e) {
+                        System.out.println(e.getMessage());
+                    }
                     System.out.println(mortgageProperty.getName() + ", put under mortgage, you lost " + mortgageProperty.getPrice()  + "$");
                 }
 
             }
+
         }
         System.out.println("Game Over " + player.getName() + " Won!!!");
     }

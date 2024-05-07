@@ -7,7 +7,7 @@ public class Property extends Tile {
     }
 
     public enum PropertyType {
-        BROWN, LIGHT_BLUE, PINK, ORANGE, RED, YELLOW, GREEN, BLUE, RAILROAD
+        BROWN, LIGHT_BLUE, PINK, ORANGE, RED, YELLOW, GREEN, BLUE, ELEVATOR
     }
 
     private int price;
@@ -15,24 +15,22 @@ public class Property extends Tile {
     private int level1Fee;
     private int level2Fee;
     private int level3Fee;
-    private int mortgage;
     private int numberOfHouses;
     private PropertyType propertyType;
     private Player owner;
     private boolean isBuildable;
     private boolean isUnderMortgage;
 
-    public Property(String name, int price, int rent, int level1Fee, int level2Fee, int level3Fee, int mortgage, PropertyType propertyType, boolean isBuildable) {
+    public Property(String name, int price, int rent, int level1Fee, int level2Fee, int level3Fee, PropertyType propertyType, boolean isBuildable) {
         super(name);
         this.price = price;
         this.rent = rent;
         this.level1Fee = level1Fee;
         this.level2Fee = level2Fee;
         this.level3Fee = level3Fee;
-        this.mortgage = mortgage;
         this.propertyType = propertyType;
-        this.numberOfHouses = 0; // Initially, there are no houses
-        this.owner = null;       // am.aua.monopoly.core.Property is initially not owned
+        this.numberOfHouses = 0;
+        this.owner = null;
         this.isBuildable = isBuildable;
         this.isUnderMortgage = false;
     }
@@ -44,7 +42,6 @@ public class Property extends Tile {
         this.level1Fee = other.level1Fee;
         this.level2Fee = other.level2Fee;
         this.level3Fee = other.level3Fee;
-        this.mortgage = other.mortgage;
         this.numberOfHouses = other.numberOfHouses;
         this.propertyType = other.propertyType;
 
@@ -80,14 +77,6 @@ public class Property extends Tile {
             }
         }
         return -1;
-    }
-
-    public int getMortgage() {
-        return mortgage;
-    }
-
-    public void setMortgage(int mortgage) {
-        this.mortgage = mortgage;
     }
 
 

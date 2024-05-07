@@ -15,13 +15,14 @@ public class Player {
     private int money;
     private String name;
     private boolean isInJail;
+    private boolean hasFreeFromJailCard;
     private int position;
     private ArrayList<Property> playerProperties;
 
 
 
     public Player(String name, Type type) {
-        this.money = 0;
+        this.money = 2000;
         this.name = name;
         this.playerType = type;
         this.position = 0;
@@ -47,13 +48,22 @@ public class Player {
         return this.playerType;
     }
 
+    public boolean getHasFreeFromJailCard() {
+        return hasFreeFromJailCard;
+    }
+
+    public void setHasFreeFromJailCard(boolean hasFreeFromJailCard) {
+        this.hasFreeFromJailCard = hasFreeFromJailCard;
+    }
 
     public int getMoney() {
         return this.money;
     }
 
-    public void setMoney(int money) {
-        this.money = money;
+    public void setMoney(int money) throws OutOfMoneyException {
+        if(money > 0) {
+            this.money = money;
+        }else throw new OutOfMoneyException();
     }
 
     public String getName() {
