@@ -1,8 +1,6 @@
 package am.aua.monopoly.core;
 
-import javax.management.loading.PrivateClassLoader;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Monopoly {
     private int numberOfPLayers;
@@ -16,7 +14,8 @@ public class Monopoly {
     private int turn;
     private boolean hasRolled;
     private boolean hasRolledDouble;
-    private boolean hasRolledTriple;
+    private boolean playerHasBeenRemoved;
+    private int diceDoubleCounter = 0;
 
 
     public Monopoly(int numberOfPlayers) throws InvalidNumberOfPlayersException {
@@ -31,7 +30,6 @@ public class Monopoly {
             cards = Card.initializeCards();
             hasRolled = false;
             hasRolledDouble = false;
-            hasRolledTriple = false;
         }
 
     }
@@ -43,11 +41,9 @@ public class Monopoly {
         }
     }
 
-
     public ArrayList<Player> getPlayers() {
         return players;
     }
-
 
     public boolean getHasRolled() {
         return hasRolled;
@@ -57,30 +53,25 @@ public class Monopoly {
         return hasRolledDouble;
     }
 
-    public boolean getHasRolledTriple() {
-        return hasRolledTriple;
-    }
-
 
     public static boolean canBuildOn(Property prop) {
-        Property.PropertyType type = prop.getPropertyType();
-        Player owner = prop.getOwner();
+        if (prop.getIsBuildable()) {
+            Property.PropertyType type = prop.getPropertyType();
+            Player owner = prop.getOwner();
 
-        for (int i = 0; i < Board.tiles.size(); i++) {
-            if (Board.tiles.get(i).getClass() == Property.class) {
-                Property property = (Property) Board.tiles.get(i);
-                int houses = property.getNumberOfHouses();
-                if (property.getPropertyType() == type && property.getOwner() != owner) {
-                    return false;
+            for (int i = 0; i < Board.tiles.size(); i++) {
+                if (Board.tiles.get(i).getClass() == Property.class) {
+                    Property property = (Property) Board.tiles.get(i);
+                    if (property.getPropertyType() == type && property.getOwner() != owner) {
+                        return false;
+                    }
                 }
-
-
             }
-        }
-        return true;
+            return true;
+        } else return false;
     }
 
-    public static void build(Player player, Property prop) throws InvalidNumberOfHousesException {
+    public static void build(Player player, Property prop) throws InvalidNumberOfHousesException, OutOfMoneyException {
         if (canBuildOn(prop)) {
             int fee = 0;
             switch (prop.getNumberOfHouses()) {
@@ -112,7 +103,7 @@ public class Monopoly {
         }
     }
 
-    public void move(Player player, int diceRoll) {
+    public String move(Player player, int diceRoll) throws OutOfMoneyException {
         player.setPosition(player.getPosition() + diceRoll);
         if (player.getPosition() > Board.BOARD_SIZE - 1) {
             int difference = player.getPosition() - Board.BOARD_SIZE;
@@ -120,35 +111,97 @@ public class Monopoly {
             player.setMoney(player.getMoney() + 200);
         }
 
-        if (player.getPosition() == 2 || player.getPosition() == 7 || player.getPosition() == 17 || player.getPosition() == 33) {
-            System.out.println(getCard(player));
-        } else payRent(player);
+        if ((Board.tileAt(player.getPosition()).getName().equals("Community Chest Tile")) || (Board.tileAt(player.getPosition()).getName().equals("Chance Tile"))) {
+            return getCard(player);
+        } else if (((Board.tileAt(player.getPosition()).getName().equals("Student Service Fee"))) || (Board.tileAt(player.getPosition()).getName().equals("Water Works")) || (Board.tileAt(player.getPosition()).getName().equals("Electricity fee")) || (Board.tileAt(player.getPosition()).getName().equals("Admission Fee"))) {
+            player.setMoney(player.getMoney() + (Board.tileAt(player.getPosition()).getFee()));
+            return null;
+        } else  if(Board.tileAt(player.getPosition()).getName().equals("CourtRoom")) {
+            goToProbation(player);
+//            System.out.println("From Court");
+            return null;
+        } else {
+            payRent(player);
+
+        }
+
 
         hasRolled = true;
-        hasRolledDouble = false;
+        hasRolledDouble = Dice.isDouble();
+        if(hasRolledDouble) {
+           diceDoubleCounter++;
+        } else {
+            diceDoubleCounter = 0;
+        }
 
+        if(diceDoubleCounter == 3) {
+            goToProbation(player);
+            diceDoubleCounter = 0;
+//            System.out.println("From 3 times");
+        }
+
+        return null;
     }
 
-    public static void payRent(Player player) {
+    public void teleport(Player player, Property property) throws InvalidTeleportLocationException {
+        boolean foundProperty1 = false;
+        boolean foundProperty2 = false;
+
+        Property currentProperty = Board.propertyAt(player.getPosition());
+        for (Property playerProperty : player.getPlayerProperties()) {
+            if (playerProperty == property) {
+                foundProperty1 = true;
+                break;
+            }
+        }
+        for (Property playerProperty : player.getPlayerProperties()) {
+            if (playerProperty == currentProperty) {
+                foundProperty2 = true;
+                break;
+            }
+        }
+        if (!foundProperty1 && !foundProperty2) {
+            throw new InvalidTeleportLocationException();
+        }
+
+        if (currentProperty != null && currentProperty.getPropertyType() == Property.PropertyType.ELEVATOR &&
+                property != currentProperty && property.getPropertyType() == Property.PropertyType.ELEVATOR) {
+            player.setPosition(property.getPosition());
+        }
+    }
+
+
+    public static void payRent(Player player) throws OutOfMoneyException {
         Property property = Board.propertyAt(player.getPosition());
         if (property != null) {
             Player owner = property.getOwner();
-
             int propertyTax = 0;
-            switch (property.getNumberOfHouses()) {
-                case 0:
-                    propertyTax = property.getRent();
-                    break;
-                case 1:
-                    propertyTax = property.getLevel1Fee();
-                    break;
-                case 2:
-                    propertyTax = property.getLevel2Fee();
-                    break;
-                case 3:
-                    propertyTax = property.getLevel3Fee();
-                    break;
+            int elevatorCount = 0;
 
+            if (property.getPropertyType() == Property.PropertyType.ELEVATOR) {
+                for (int i = 0; i < player.getPlayerProperties().size(); i++) {
+                    if (player.getPlayerProperties().get(i).getPropertyType() == Property.PropertyType.ELEVATOR) {
+                        elevatorCount++;
+                    }
+                }
+                propertyTax = elevatorCount * property.getRent();
+
+            } else {
+                switch (property.getNumberOfHouses()) {
+                    case 0:
+                        propertyTax = property.getRent();
+                        break;
+                    case 1:
+                        propertyTax = property.getLevel1Fee();
+                        break;
+                    case 2:
+                        propertyTax = property.getLevel2Fee();
+                        break;
+                    case 3:
+                        propertyTax = property.getLevel3Fee();
+                        break;
+
+                }
             }
 
             if (owner != null && owner != player && !property.getIsUnderMortgage()) {
@@ -159,7 +212,7 @@ public class Monopoly {
 
     }
 
-    public static void buyProperty(Player player, int p) throws InvalidPurchaseException {
+    public static void buyProperty(Player player, int p) throws InvalidPurchaseException, OutOfMoneyException {
 
         if (Board.tileAt(p).getClass() == Property.class && Board.propertyAt(p).getOwner() == null) {
             player.setMoney(player.getMoney() - Board.propertyAt(p).getPrice());
@@ -171,21 +224,25 @@ public class Monopoly {
 
     }
 
-    public static void sellProperty(Player player, Property prop){
+    public static void sellProperty(Player player, Property prop) throws OutOfMoneyException {
         for (int i = 0; i < player.getPlayerProperties().size(); i++) {
-            if(prop == player.getPlayerProperties().get(i)) {
+            if (prop == player.getPlayerProperties().get(i)) {
                 player.removeFromPlayerProperties(prop);
+                player.setMoney(player.getMoney() + prop.getPrice());
             }
         }
     }
 
-    public static String getCard(Player player) {
-        int i = (int) (Math.random() * (cards.size())) + 1;
+    public static String getCard(Player player) throws OutOfMoneyException {
+        int i = (int) (Math.random() * (cards.size()));
 
         if (cards.get(i).getId() == 1) {
             player.setMoney(player.getMoney() + cards.get(i).getFee());
         }
         if (cards.get(i).getId() == 2) {
+            if (cards.get(i).getPosition() == Property.nameToPosition("Probation")){
+                player.setIsInProbation(true);
+            }
             player.setPosition(cards.get(i).getPosition());
         }
         if (cards.get(i).getId() == 3) {
@@ -199,24 +256,49 @@ public class Monopoly {
             player.setMoney(player.getMoney() + cards.get(i).getFee());
             player.setPosition(cards.get(i).getPosition());
         }
+        if (cards.get(i).getId() == 5) {
+            player.setHasFreeFromProbationCard(true);
+        }
         return cards.get(i).getContent();
     }
 
-    public void GoToJail(Player player) {
-        if (player.getPosition() == 30) {
+    public void goToProbation(Player player) {
+//        if (player.getPosition() == Property.nameToPosition("Courtroom") || Dice.checkSpeeding()) {
             player.setPosition(10);
-            player.setIsInJail(true);
+            player.setIsInProbation(true);
+            System.out.println("You are in jail");
+//        }
+    }
+
+    public boolean getOutOfProbationByCard(Player player) {
+        if (player.getIsInProbation()) {
+            if (player.getHasFreeFromProbationCard()) {
+                getTurn();
+                player.setIsInProbation(false);
+                player.setHasFreeFromProbationCard(false);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void getOutOfProbationByMoney(Player player) throws OutOfMoneyException {
+        if (player.getIsInProbation() && !getOutOfProbationByCard(player)) {
+            player.setMoney(player.getMoney() - 200);
+            player.setIsInProbation(false);
         }
     }
 
-    public static void putUnderMortgage(Player player, Property prop) {
+
+
+    public static void putUnderMortgage(Player player, Property prop) throws OutOfMoneyException {
         if (prop.getOwner() == player) {
             prop.setIsUnderMortgage(true);
             player.setMoney(player.getMoney() + prop.getPrice());
         }
     }
 
-    public static void deMortgage(Player player, Property prop) {
+    public static void deMortgage(Player player, Property prop) throws OutOfMoneyException {
         if (prop.getIsUnderMortgage()) {
             if (prop.getOwner() == player) {
                 prop.setIsUnderMortgage(false);
@@ -231,6 +313,7 @@ public class Monopoly {
             property.setOwner(null);
         }
         players.remove(player);
+        playerHasBeenRemoved = true;
     }
 
     public void bankrupt(Player player) {
@@ -243,7 +326,6 @@ public class Monopoly {
                 mortgageProperties++;
             }
         }
-
 
         if (properties == 0 && playerBudget == 0) {
             leaveTheGame(player);
@@ -262,20 +344,25 @@ public class Monopoly {
 
 
     public Player getTurn() {
-        ++turn;
-        if (turn > players.size() - 1) {
-            turn = 0;
-        }
         hasRolled = false;
         hasRolledDouble = false;
-        return players.get(turn);
 
-}
-    public static ArrayList<Property> showProperties(Player player){
-       return player.getPlayerProperties();
+        if (playerHasBeenRemoved) {
+            turn = turn % players.size();
+            playerHasBeenRemoved = false;
+        } else {
+            turn = (turn + 1) % players.size();
+        }
+
+        return players.get(turn);
     }
 
-    public void print(ArrayList<Property> arrayList){
+
+    public static ArrayList<Property> showProperties(Player player) {
+        return player.getPlayerProperties();
+    }
+
+    public void print(ArrayList<Property> arrayList) {
         for (int i = 0; i < arrayList.size(); i++) {
             System.out.println(arrayList.get(i).getName() + arrayList.get(i).getNumberOfHouses());
         }
@@ -310,5 +397,16 @@ public class Monopoly {
 
         }
         return mortgageProps;
+    }
+
+    public static ArrayList<Property> ElevatorChecker(Player player) {
+        ArrayList<Property> elevators = new ArrayList<>();
+        for (Property prop : player.getPlayerProperties()) {
+            if (prop.getPropertyType() == Property.PropertyType.ELEVATOR) {
+                elevators.add(prop);
+            }
+
+        }
+        return elevators;
     }
 }

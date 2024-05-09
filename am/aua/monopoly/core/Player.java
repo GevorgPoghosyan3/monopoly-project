@@ -14,19 +14,20 @@ public class Player {
     private Type playerType;
     private int money;
     private String name;
-    private boolean isInJail;
+    private boolean isInProbation;
+    private boolean hasFreeFromProbationCard;
     private int position;
     private ArrayList<Property> playerProperties;
 
 
 
     public Player(String name, Type type) {
-        this.money = 1500;
+        this.money = 2000;
         this.name = name;
         this.playerType = type;
         this.position = 0;
         this.playerProperties = new ArrayList<>();
-        this.isInJail = false;
+        this.isInProbation = false;
     }
 
     public Player(Player other) {
@@ -34,7 +35,7 @@ public class Player {
         this.money = other.money;
         this.name = other.name;
         this.position = other.position;
-        this.isInJail = other.isInJail;
+        this.isInProbation = other.isInProbation;
 
         this.playerProperties = new ArrayList<>();
         for (Property property : other.playerProperties) {
@@ -47,23 +48,32 @@ public class Player {
         return this.playerType;
     }
 
+    public boolean getHasFreeFromProbationCard() {
+        return hasFreeFromProbationCard;
+    }
+
+    public void setHasFreeFromProbationCard(boolean hasFreeFromProbationCard) {
+        this.hasFreeFromProbationCard = hasFreeFromProbationCard;
+    }
 
     public int getMoney() {
         return this.money;
     }
 
-    public void setMoney(int money) {
-        this.money = money;
+    public void setMoney(int money) throws OutOfMoneyException {
+        if(money > 0) {
+            this.money = money;
+        }else throw new OutOfMoneyException();
     }
 
     public String getName() {
         return this.name;
     }
-    public boolean getIsInJail(){
-        return this.isInJail;
+    public boolean getIsInProbation(){
+        return this.isInProbation;
     }
-    public void setIsInJail(boolean isInJail){
-        this.isInJail = isInJail;
+    public void setIsInProbation(boolean isInProbation){
+        this.isInProbation = isInProbation;
     }
 
     public int getPosition() {

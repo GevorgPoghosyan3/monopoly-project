@@ -7,12 +7,21 @@ import java.util.Objects;
  */
 public class Tile {
     private String name;
+    private int fee;
 
     // Simplified constructor for new tile creation
     public Tile(String name) {
         this.name = name;
     }
 
+    public Tile(String name, int fee){
+        this(name);
+        this.fee = fee;
+    }
+
+    public int getFee(){
+        return fee;
+    }
     // Copy constructor - removed unnecessary cloning where not needed
     public Tile(Tile other) {
         this.name = other.name;
@@ -31,7 +40,6 @@ public class Tile {
         }
         return position;
     }
-
 
     public boolean equals(Tile other) {
         if (other == null)
