@@ -2,40 +2,86 @@ package am.aua.monopoly.core;
 
 import java.util.ArrayList;
 
+/**
+ * Represents the cards used in the Monopoly game.
+ * Each card has an ID, content, fee, and optional position.
+ */
 public class Card {
     private String content;
     private int id;
     private int position;
     private int fee;
 
-
-    public Card(int id, String content, int fee, int position){
+    /**
+     * Constructs a Card object with specified ID, content, fee, and position.
+     *
+     * @param id       The ID of the card.
+     * @param content  The content of the card.
+     * @param fee      The fee associated with the card.
+     * @param position The position to move to, if applicable.
+     */
+    public Card(int id, String content, int fee, int position) {
         this.id = id;
         this.content = content;
         this.fee = fee;
         this.position = position;
     }
-    public Card(int id, String content, int fee){
+
+    /**
+     * Constructs a Card object with specified ID, content, and fee.
+     *
+     * @param id      The ID of the card.
+     * @param content The content of the card.
+     * @param fee     The fee associated with the card.
+     */
+    public Card(int id, String content, int fee) {
         this.id = id;
         this.content = content;
         this.fee = fee;
     }
 
+    /**
+     * Retrieves the fee associated with the card.
+     *
+     * @return The fee associated with the card.
+     */
     public int getFee() {
         return fee;
     }
 
-    public int getPosition(){
+    /**
+     * Retrieves the position to move to, if applicable.
+     *
+     * @return The position to move to, or 0 if not applicable.
+     */
+    public int getPosition() {
         return position;
     }
 
-    public String getContent(){
+    /**
+     * Retrieves the content of the card.
+     *
+     * @return The content of the card.
+     */
+    public String getContent() {
         return content;
     }
-    public int getId(){
+
+
+    /**
+     * Retrieves the ID of the card.
+     *
+     * @return The ID of the card.
+     */
+    public int getId() {
         return id;
     }
 
+    /**
+     * Initializes and returns a list of cards with predefined values.
+     *
+     * @return A list of Card objects.
+     */
     public static ArrayList<Card> initializeCards() {
         ArrayList<Card> cards = new ArrayList<>();
         cards.add(new Card(0, "Advance to Go. Collect $200.", 200, 0));

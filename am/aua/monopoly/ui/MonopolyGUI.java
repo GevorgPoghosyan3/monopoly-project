@@ -1,13 +1,16 @@
 package am.aua.monopoly.ui;
 
 import am.aua.monopoly.core.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * MonopolyGUI class represents the graphical user interface for the Monopoly game.
+ */
 public class MonopolyGUI extends JFrame {
-    private static final int NUM_SPACES = Board.BOARD_SIZE;  // e.g., 40 for a standard Monopoly board
     private JFrame frame;
     private JLayeredPane layeredPane;
     private JPanel boardPanel;
@@ -20,12 +23,57 @@ public class MonopolyGUI extends JFrame {
     private Player currentPlayer;
     private ImageIcon monopolyImage;
     private ArrayList<JLabel> playerLabels = new ArrayList<>();
-    private static final int BOARD_SIZE = 600; // Size of the board in pixels
-    private static final int NUM_SPACES_PER_SIDE = 10; // Including the corner as part of two sides
-    private static final int SPACE_SIZE = BOARD_SIZE / (NUM_SPACES_PER_SIDE); // Adjusted for even distribution
+    private static final int BOARD_SIZE = 600;
+    private static final int NUM_SPACES_PER_SIDE = 10;
+    private static final int SPACE_SIZE = BOARD_SIZE / (NUM_SPACES_PER_SIDE);
 
     private static final ArrayList<int[]> POSITIONS = initializePositions();
 
+    /**
+     * Initializes the user interface.
+     */
+    private void initializeUI() {
+        frame = new JFrame("Monopoly Game");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(900, 900);
+        frame.setLayout(new BorderLayout(10, 10));
+        frame.add(layeredPane, BorderLayout.CENTER);
+        setupControlPanel();
+        setupInfoPanel();
+        frame.add(controlPanel, BorderLayout.SOUTH);
+        frame.add(infoPanel, BorderLayout.EAST);
+        frame.setVisible(true);
+    }
+
+    /**
+     * Initializes the game.
+     */
+    private void initializeGame() {
+        String input = JOptionPane.showInputDialog(frame, "Welcome to Monopoly: AUA Edition! \n Enter the Number of Players:");
+        int numberOfPlayers = 0;
+        try {
+            numberOfPlayers = Integer.parseInt(input);
+            monopoly = new Monopoly(numberOfPlayers);
+        } catch (NumberFormatException | InvalidNumberOfPlayersException e) {
+            JOptionPane.showMessageDialog(frame, "Invalid input: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
+
+        String[] playerNames = new String[numberOfPlayers];
+        for (int i = 0; i < numberOfPlayers; i++) {
+            playerNames[i] = JOptionPane.showInputDialog(frame, "Enter player " + (i + 1) + " name:");
+            if (playerNames[i] == null || playerNames[i].trim().isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Player name cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
+                i--;
+            }
+        }
+        monopoly.setPlayers(playerNames);
+        currentPlayer = monopoly.getTurn();
+    }
+
+    /**
+     * Runs the game.
+     */
     public void run() {
         initializeGame();
         setTitle("Monopoly Game");
@@ -36,6 +84,11 @@ public class MonopolyGUI extends JFrame {
         frame.setResizable(false);
     }
 
+    /**
+     * Initializes the positions of the tiles on the board.
+     *
+     * @return ArrayList of positions.
+     */
     private static ArrayList<int[]> initializePositions() {
         ArrayList<int[]> positions = new ArrayList<>();
         int boardSize = 600;
@@ -67,6 +120,9 @@ public class MonopolyGUI extends JFrame {
         return positions;
     }
 
+    /**
+     * Loads the game board.
+     */
     private void loadBoard() {
         ImageIcon originalIcon = new ImageIcon("resources/board1.jpg");
         Image originalImage = originalIcon.getImage();
@@ -100,6 +156,13 @@ public class MonopolyGUI extends JFrame {
         layeredPane.add(boardPanel, Integer.valueOf(0));
     }
 
+    /**
+     * Moves the player label to the specified position on the game board.
+     *
+     * @param playerId The ID of the player whose label needs to be moved.
+     * @param newX     The new X-coordinate of the player label.
+     * @param newY     The new Y-coordinate of the player label.
+     */
     private void movePlayer(int playerId, int newX, int newY) {
         JLabel playerLabel = playerLabels.get(playerId);
         playerLabel.setBounds(newX, newY, 50, 50);
@@ -107,43 +170,52 @@ public class MonopolyGUI extends JFrame {
         playerLabel.repaint();
     }
 
+    /**
+     * Sets up the information panel displaying the current player and balance.
+     */
     private void setupInfoPanel() {
         infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-        infoPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 100, 250)); // Increased padding
-        infoPanel.setBackground(new Color(249, 255, 205)); // Light background color
+        infoPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 100, 220));
+        infoPanel.setBackground(new Color(249, 255, 205));
 
         currentPlayerLabel = new JLabel("Current Player: " + currentPlayer.getName());
-        currentPlayerLabel.setFont(new Font("Serif", Font.BOLD, 20)); // Larger font size
+        currentPlayerLabel.setFont(new Font("Serif", Font.BOLD, 20));
         currentPlayerLabel.setForeground(new Color(153, 153, 172));
         currentPlayerLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         currentBalanceLabel = new JLabel("Balance: $" + currentPlayer.getMoney());
-        currentBalanceLabel.setFont(new Font("Serif", Font.PLAIN, 18)); // Slightly larger font
+        currentBalanceLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         currentBalanceLabel.setForeground(new Color(36, 108, 21));
         currentBalanceLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        infoPanel.add(Box.createVerticalStrut(30)); // Increased vertical spacing
+        infoPanel.add(Box.createVerticalStrut(30));
         infoPanel.add(currentPlayerLabel);
         infoPanel.add(Box.createVerticalStrut(15));
         infoPanel.add(currentBalanceLabel);
         infoPanel.add(Box.createVerticalStrut(30));
     }
 
-
+    /**
+     * Creates a styled JButton with custom font and background color.
+     *
+     * @param text The text to be displayed on the button.
+     * @return The styled JButton.
+     */
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
         button.setFont(new Font("SansSerif", Font.BOLD, 12));
-        button.setBackground(new Color(240, 240, 240)); // Very light gray
+        button.setBackground(new Color(240, 240, 240));
         return button;
     }
 
-
+    /**
+     * Handles the action when the roll dice button is clicked.
+     */
     private void handleRollDice() {
         if (!monopoly.gameOver()) {
             monopoly.bankrupt(currentPlayer);
 
-            // Check if the player has already rolled or if they rolled doubles and can roll again
             if (!monopoly.getHasRolled() || monopoly.getHasRolledDouble()) {
                 try {
                     String cardContent = monopoly.move(currentPlayer, Dice.roll());
@@ -151,23 +223,23 @@ public class MonopolyGUI extends JFrame {
                     if (cardContent != null) {
                         JOptionPane.showMessageDialog(frame, cardContent, "Your Card", JOptionPane.INFORMATION_MESSAGE);
                     }
-                    updatePlayerInfo(); // Update the player's GUI information
-                    // Displaying the dice result in a dialog
+                    updatePlayerInfo();
                     JOptionPane.showMessageDialog(frame, Dice.toStringDice() + "\n" +
                                     currentPlayer.getName() + " moves to " + Board.tileAt(currentPlayer.getPosition()).getName(),
                             "Dice Roll", JOptionPane.INFORMATION_MESSAGE);
                 } catch (OutOfMoneyException e) {
-                    // Handle case where player cannot pay for an action triggered by the dice roll
                     JOptionPane.showMessageDialog(frame, "Out of money: " + e.getMessage(), "Financial Error", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                // Inform the player that they cannot roll the dice again
                 JOptionPane.showMessageDialog(frame, "You have already rolled the dice", "Roll Dice", JOptionPane.WARNING_MESSAGE);
             }
-        }else  JOptionPane.showMessageDialog(frame, "Game Over " + currentPlayer.getName() + " Won!", "Over", JOptionPane.WARNING_MESSAGE);
+        } else
+            JOptionPane.showMessageDialog(frame, "Game Over " + currentPlayer.getName() + " Won!", "Over", JOptionPane.WARNING_MESSAGE);
     }
 
-
+    /**
+     * Handles the action when the buy property button is clicked.
+     */
     private void handleBuyProperty() {
         if (monopoly.getHasRolled()) {
             try {
@@ -181,20 +253,19 @@ public class MonopolyGUI extends JFrame {
             JOptionPane.showMessageDialog(frame, "You should roll the dice.", "Dice Error", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Handles the action when the sell property button is clicked.
+     */
     private void handleSellProperty() {
-        // Retrieve the properties list
         java.util.List<Property> properties = Monopoly.showProperties(currentPlayer);
 
-        // Check if the player has properties to sell
         if (properties.isEmpty()) {
             JOptionPane.showMessageDialog(frame, "You don't have any properties to sell.", "No Properties", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        // Convert properties list to a readable format for display in a JComboBox
         String[] propertyNames = properties.stream().map(Property::getName).toArray(String[]::new);
 
-        // Create a JComboBox to let the user select a property
         JComboBox<String> propertyCombo = new JComboBox<>(propertyNames);
         JOptionPane.showMessageDialog(null, propertyCombo, "Select a property to sell", JOptionPane.QUESTION_MESSAGE);
 
@@ -211,8 +282,10 @@ public class MonopolyGUI extends JFrame {
         updatePlayerInfo();
     }
 
+    /**
+     * Handles the action when teleport button is clicked.
+     */
     private void handleTeleport() {
-        // Retrieve railroad properties the player can teleport to
         List<Property> railroadProperties = Monopoly.ElevatorChecker(currentPlayer);
 
         if (railroadProperties.isEmpty()) {
@@ -245,21 +318,19 @@ public class MonopolyGUI extends JFrame {
         updatePlayerInfo();
     }
 
-
+    /**
+     * Handles the action when the build button is clicked.
+     */
     private void handleBuild() {
-        // Retrieve properties of the same color
         java.util.List<Property> buildableProperties = Monopoly.checkSameColorProps(currentPlayer);
 
-        // Check if there are properties to build on
         if (buildableProperties.isEmpty()) {
             JOptionPane.showMessageDialog(frame, "No properties available for building.", "Build Error", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        // Convert properties list to a readable format for JComboBox
         String[] propertyNames = buildableProperties.stream().map(Property::getName).toArray(String[]::new);
 
-        // Create JComboBox to let the user select a property
         JComboBox<String> propertyCombo = new JComboBox<>(propertyNames);
         int result = JOptionPane.showConfirmDialog(null, propertyCombo, "Select a property to build on", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
@@ -278,8 +349,10 @@ public class MonopolyGUI extends JFrame {
         updatePlayerInfo();
     }
 
+    /**
+     * Handles the action when the mortgage button is clicked.
+     */
     private void handleMortgage() {
-        // Retrieve properties not under mortgage
         java.util.List<Property> mortgageableProperties = Monopoly.checkNotUnderMortgage(currentPlayer);
 
         if (mortgageableProperties.isEmpty()) {
@@ -306,8 +379,10 @@ public class MonopolyGUI extends JFrame {
         updatePlayerInfo();
     }
 
+    /**
+     * Handles the action when the de-mortgage button is clicked.
+     */
     private void handleDemortgage() {
-        // Retrieve properties currently under mortgage
         java.util.List<Property> demortgageableProperties = Monopoly.checkUnderMortgage(currentPlayer);
 
         if (demortgageableProperties.isEmpty()) {
@@ -334,6 +409,9 @@ public class MonopolyGUI extends JFrame {
         updatePlayerInfo();
     }
 
+    /**
+     * Handles the action when the next turn button is clicked.
+     */
     private void handleNextTurn() {
         if (monopoly.getHasRolled() && !monopoly.getHasRolledDouble()) {
             currentPlayer = monopoly.getTurn();
@@ -343,20 +421,26 @@ public class MonopolyGUI extends JFrame {
             JOptionPane.showMessageDialog(frame, "You should roll the dice.", "Dice Error", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Handles the action when the quit button is clicked.
+     */
     private void handleQuit() {
         int response = JOptionPane.showConfirmDialog(frame, "Are you sure you want to quit the game?", "Confirm Quit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (response == JOptionPane.YES_OPTION) {
             try {
-                monopoly.leaveTheGame(currentPlayer);  // Assuming leaveTheGame handles player removal and game state
-                currentPlayer = monopoly.getTurn();  // Update to the next player
+                monopoly.leaveTheGame(currentPlayer);
+                currentPlayer = monopoly.getTurn();
                 JOptionPane.showMessageDialog(frame, currentPlayer.getName() + "'s turn with type " + currentPlayer.getType(), "Next Player", JOptionPane.INFORMATION_MESSAGE);
                 updatePlayerInfo();
-            } catch (Exception e) {  // Catch any potential exceptions thrown by the game logic
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(frame, "Error quitting game: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
+    /**
+     * Handles the action when the show properties button is clicked.
+     */
     private void handleShowProperties() {
         java.util.List<Property> properties = Monopoly.showProperties(currentPlayer);
 
@@ -382,24 +466,24 @@ public class MonopolyGUI extends JFrame {
         }
     }
 
-
-
-
-
+    /**
+     * Updates the player information displayed in the GUI.
+     */
     private void updatePlayerInfo() {
         currentPlayerLabel.setText("Current Player: " + currentPlayer.getName());
         currentBalanceLabel.setText("Balance: $" + currentPlayer.getMoney());
     }
 
-
-
+    /**
+     * Sets up the control panel of the GUI.
+     * This method initializes buttons for various game actions and adds them to the control panel with appropriate action listeners.
+     */
     private void setupControlPanel() {
         controlPanel = new JPanel();
-        controlPanel.setLayout(new GridLayout(2, 5, 10, 10)); // Set the grid to have two rows and five columns
+        controlPanel.setLayout(new GridLayout(2, 5, 10, 10));
         controlPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        controlPanel.setBackground(new Color(195, 194, 194)); // Pale turquoise background
+        controlPanel.setBackground(new Color(195, 194, 194));
 
-        // Create and add buttons to the panel using the `createStyledButton` method
         rollDiceButton = createStyledButton("Roll Dice");
         buyButton = createStyledButton("Buy");
         sellButton = createStyledButton("Sell");
@@ -411,7 +495,6 @@ public class MonopolyGUI extends JFrame {
         nextTurnButton = createStyledButton("Next Turn");
         quitButton = createStyledButton("Quit");
 
-        // Add buttons to the control panel
         controlPanel.add(rollDiceButton);
         controlPanel.add(nextTurnButton);
         controlPanel.add(buyButton);
@@ -435,43 +518,4 @@ public class MonopolyGUI extends JFrame {
         quitButton.addActionListener(e -> handleQuit());
     }
 
-    private void initializeUI() {
-        frame = new JFrame("Monopoly Game");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(900, 900);  // Slightly larger to accommodate better layout
-        frame.setLayout(new BorderLayout(10, 10));  // Gaps between components
-        frame.add(layeredPane, BorderLayout.CENTER);
-        setupControlPanel();
-        setupInfoPanel();
-        frame.add(controlPanel, BorderLayout.SOUTH);
-        frame.add(infoPanel, BorderLayout.EAST);
-        frame.setVisible(true);
-    }
-
-
-
-    private void initializeGame() {
-        // Ask for the number of players
-        String input = JOptionPane.showInputDialog(frame, "Welcome to Monopoly: AUA Edition! \n Enter the Number of Players:");
-        int numberOfPlayers = 0;
-        try {
-            numberOfPlayers = Integer.parseInt(input);
-            monopoly = new Monopoly(numberOfPlayers);
-        } catch (NumberFormatException | InvalidNumberOfPlayersException e) {
-            JOptionPane.showMessageDialog(frame, "Invalid input: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
-        }
-
-        // Collect player names
-        String[] playerNames = new String[numberOfPlayers];
-        for (int i = 0; i < numberOfPlayers; i++) {
-            playerNames[i] = JOptionPane.showInputDialog(frame, "Enter player " + (i + 1) + " name:");
-            if (playerNames[i] == null || playerNames[i].trim().isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "Player name cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
-                i--;  // Decrement i to redo the input for this player
-            }
-        }
-        monopoly.setPlayers(playerNames);
-        currentPlayer = monopoly.getTurn();  // Start the game with the first player's turn
-    }
 }

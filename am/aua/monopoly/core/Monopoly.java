@@ -2,6 +2,9 @@ package am.aua.monopoly.core;
 
 import java.util.ArrayList;
 
+/**
+ * The Monopoly class represents the core logic of the Monopoly game.
+ */
 public class Monopoly {
     private int numberOfPLayers;
 
@@ -18,6 +21,12 @@ public class Monopoly {
     private int diceDoubleCounter = 0;
 
 
+    /**
+     * Constructs a Monopoly game with the specified number of players.
+     *
+     * @param numberOfPlayers The number of players in the game.
+     * @throws InvalidNumberOfPlayersException If the number of players is invalid.
+     */
     public Monopoly(int numberOfPlayers) throws InvalidNumberOfPlayersException {
         players = new ArrayList<>();
         if (numberOfPlayers < 2 || numberOfPlayers > 5) {
@@ -34,26 +43,69 @@ public class Monopoly {
 
     }
 
+    /**
+     * Retrieves the list of players in the game.
+     *
+     * @return The list of players.
+     */
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
 
+    /**
+     * Retrieves the flag indicating if a player has rolled the dice.
+     *
+     * @return True if a player has rolled the dice, otherwise false.
+     */
+    public boolean getHasRolled() {
+        return hasRolled;
+    }
+
+    /**
+     * Retrieves the flag indicating if a player has rolled a double.
+     *
+     * @return True if a player has rolled a double, otherwise false.
+     */
+    public boolean getHasRolledDouble() {
+        return hasRolledDouble;
+    }
+
+    /**
+     * Moves to the next player's turn and returns the player.
+     *
+     * @return The player whose turn is next.
+     */
+    public Player getTurn() {
+        hasRolled = false;
+        hasRolledDouble = false;
+
+        if (playerHasBeenRemoved) {
+            turn = turn % players.size();
+            playerHasBeenRemoved = false;
+        } else {
+            turn = (turn + 1) % players.size();
+        }
+
+        return players.get(turn);
+    }
+
+    /**
+     * Sets the names of the players in the game.
+     *
+     * @param playerNames The array of player names.
+     */
     public void setPlayers(String[] playerNames) {
         for (int i = 0; i < this.numberOfPLayers; i++) {
             players.add(new Player(playerNames[i], types[i]));
         }
     }
 
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
-
-    public boolean getHasRolled() {
-        return hasRolled;
-    }
-
-    public boolean getHasRolledDouble() {
-        return hasRolledDouble;
-    }
-
-
+    /**
+     * Determines if a property can be built upon.
+     *
+     * @param prop The property to check.
+     * @return True if building is allowed on the property, otherwise false.
+     */
     public static boolean canBuildOn(Property prop) {
         if (prop.getIsBuildable()) {
             Property.PropertyType type = prop.getPropertyType();
@@ -71,6 +123,14 @@ public class Monopoly {
         } else return false;
     }
 
+    /**
+     * Builds a house on the specified property for the given player.
+     *
+     * @param player The player who is building.
+     * @param prop   The property on which to build.
+     * @throws InvalidNumberOfHousesException If the number of houses is invalid.
+     * @throws OutOfMoneyException            If the player does not have enough money.
+     */
     public static void build(Player player, Property prop) throws InvalidNumberOfHousesException, OutOfMoneyException {
         if (canBuildOn(prop)) {
             int fee = 0;
@@ -103,6 +163,14 @@ public class Monopoly {
         }
     }
 
+    /**
+     * Moves the player on the game board based on the dice roll and performs actions based on the tile landed on.
+     *
+     * @param player   The player making the move.
+     * @param diceRoll The value rolled on the dice.
+     * @return A message indicating special actions taken based on the tile landed on, or null if no special action is needed.
+     * @throws OutOfMoneyException If the player does not have enough money to perform an action.
+     */
     public String move(Player player, int diceRoll) throws OutOfMoneyException {
         player.setPosition(player.getPosition() + diceRoll);
         if (player.getPosition() > Board.BOARD_SIZE - 1) {
@@ -116,7 +184,7 @@ public class Monopoly {
         } else if (((Board.tileAt(player.getPosition()).getName().equals("Student Service Fee"))) || (Board.tileAt(player.getPosition()).getName().equals("Water Works")) || (Board.tileAt(player.getPosition()).getName().equals("Electricity fee")) || (Board.tileAt(player.getPosition()).getName().equals("Admission Fee"))) {
             player.setMoney(player.getMoney() + (Board.tileAt(player.getPosition()).getFee()));
             return null;
-        } else  if(Board.tileAt(player.getPosition()).getName().equals("CourtRoom")) {
+        } else if (Board.tileAt(player.getPosition()).getName().equals("CourtRoom")) {
             goToProbation(player);
             return "You were sent to Probation from the Court. GUILTY!";
         } else {
@@ -124,16 +192,15 @@ public class Monopoly {
 
         }
 
-
         hasRolled = true;
         hasRolledDouble = Dice.isDouble();
-        if(hasRolledDouble) {
-           diceDoubleCounter++;
+        if (hasRolledDouble) {
+            diceDoubleCounter++;
         } else {
             diceDoubleCounter = 0;
         }
 
-        if(diceDoubleCounter == 3) {
+        if (diceDoubleCounter == 3) {
             goToProbation(player);
             diceDoubleCounter = 0;
 //            System.out.println("From 3 times");
@@ -142,6 +209,13 @@ public class Monopoly {
         return null;
     }
 
+    /**
+     * Teleports the player to the specified property if both properties are elevators.
+     *
+     * @param player   The player to be teleported.
+     * @param property The property to teleport to.
+     * @throws InvalidTeleportLocationException If the teleportation location is invalid.
+     */
     public void teleport(Player player, Property property) throws InvalidTeleportLocationException {
         boolean foundProperty1 = false;
         boolean foundProperty2 = false;
@@ -169,7 +243,12 @@ public class Monopoly {
         }
     }
 
-
+    /**
+     * Pays the rent to the owner of the property where the player landed.
+     *
+     * @param player The player paying the rent.
+     * @throws OutOfMoneyException If the player does not have enough money to pay the rent.
+     */
     public static void payRent(Player player) throws OutOfMoneyException {
         Property property = Board.propertyAt(player.getPosition());
         if (property != null) {
@@ -211,6 +290,14 @@ public class Monopoly {
 
     }
 
+    /**
+     * Allows the player to buy a property if it is available for purchase.
+     *
+     * @param player The player buying the property.
+     * @param p      The position of the property to buy.
+     * @throws InvalidPurchaseException If the property cannot be purchased.
+     * @throws OutOfMoneyException      If the player does not have enough money to buy the property.
+     */
     public static void buyProperty(Player player, int p) throws InvalidPurchaseException, OutOfMoneyException {
 
         if (Board.tileAt(p).getClass() == Property.class && Board.propertyAt(p).getOwner() == null) {
@@ -223,6 +310,13 @@ public class Monopoly {
 
     }
 
+    /**
+     * Allows the player to sell a property they own.
+     *
+     * @param player The player selling the property.
+     * @param prop   The property to sell.
+     * @throws OutOfMoneyException If the player does not have enough money to sell the property.
+     */
     public static void sellProperty(Player player, Property prop) throws OutOfMoneyException {
         for (int i = 0; i < player.getPlayerProperties().size(); i++) {
             if (prop == player.getPlayerProperties().get(i)) {
@@ -232,6 +326,13 @@ public class Monopoly {
         }
     }
 
+    /**
+     * Selects a random card and performs the corresponding action on the player.
+     *
+     * @param player The player drawing the card.
+     * @return The content of the card drawn.
+     * @throws OutOfMoneyException If the player does not have enough money to perform an action indicated by the card.
+     */
     public static String getCard(Player player) throws OutOfMoneyException {
         int i = (int) (Math.random() * (cards.size()));
 
@@ -239,7 +340,7 @@ public class Monopoly {
             player.setMoney(player.getMoney() + cards.get(i).getFee());
         }
         if (cards.get(i).getId() == 2) {
-            if (cards.get(i).getPosition() == Property.nameToPosition("Probation")){
+            if (cards.get(i).getPosition() == Property.nameToPosition("Probation")) {
                 player.setIsInProbation(true);
             }
             player.setPosition(cards.get(i).getPosition());
@@ -261,14 +362,25 @@ public class Monopoly {
         return cards.get(i).getContent();
     }
 
+    /**
+     * Sends the player to the probation tile.
+     *
+     * @param player The player being sent to probation.
+     */
     public void goToProbation(Player player) {
 //        if (player.getPosition() == Property.nameToPosition("Courtroom") || Dice.checkSpeeding()) {
-            player.setPosition(10);
-            player.setIsInProbation(true);
-            System.out.println("You are in jail");
+        player.setPosition(10);
+        player.setIsInProbation(true);
+        System.out.println("You are in jail");
 //        }
     }
 
+    /**
+     * Attempts to release the player from probation using a "Get Out of Jail Free" card.
+     *
+     * @param player The player trying to get out of probation.
+     * @return True if the player successfully uses the card, false otherwise.
+     */
     public boolean getOutOfProbationByCard(Player player) {
         if (player.getIsInProbation()) {
             if (player.getHasFreeFromProbationCard()) {
@@ -281,6 +393,12 @@ public class Monopoly {
         return false;
     }
 
+    /**
+     * Releases the player from probation by paying a fine.
+     *
+     * @param player The player trying to get out of probation.
+     * @throws OutOfMoneyException If the player does not have enough money to pay the fine.
+     */
     public void getOutOfProbationByMoney(Player player) throws OutOfMoneyException {
         if (player.getIsInProbation() && !getOutOfProbationByCard(player)) {
             player.setMoney(player.getMoney() - 200);
@@ -288,8 +406,13 @@ public class Monopoly {
         }
     }
 
-
-
+    /**
+     * Puts the specified property under mortgage, increasing the player's money.
+     *
+     * @param player The player putting the property under mortgage.
+     * @param prop   The property to put under mortgage.
+     * @throws OutOfMoneyException If the player does not have enough money to perform the operation.
+     */
     public static void putUnderMortgage(Player player, Property prop) throws OutOfMoneyException {
         if (prop.getOwner() == player) {
             prop.setIsUnderMortgage(true);
@@ -297,6 +420,13 @@ public class Monopoly {
         }
     }
 
+    /**
+     * Removes the mortgage from the specified property, decreasing the player's money.
+     *
+     * @param player The player removing the mortgage.
+     * @param prop   The property to remove the mortgage from.
+     * @throws OutOfMoneyException If the player does not have enough money to perform the operation.
+     */
     public static void deMortgage(Player player, Property prop) throws OutOfMoneyException {
         if (prop.getIsUnderMortgage()) {
             if (prop.getOwner() == player) {
@@ -306,7 +436,11 @@ public class Monopoly {
         }
     }
 
-
+    /**
+     * Removes the player from the game, releasing all their properties.
+     *
+     * @param player The player leaving the game.
+     */
     public void leaveTheGame(Player player) {
         for (Property property : player.getPlayerProperties()) {
             property.setOwner(null);
@@ -315,6 +449,11 @@ public class Monopoly {
         playerHasBeenRemoved = true;
     }
 
+    /**
+     * Checks if the player has gone bankrupt and removes them from the game if conditions are met.
+     *
+     * @param player The player to check for bankruptcy.
+     */
     public void bankrupt(Player player) {
 
         int playerBudget = player.getMoney();
@@ -334,6 +473,11 @@ public class Monopoly {
 
     }
 
+    /**
+     * Checks if the game is over by determining if there's only one player left.
+     *
+     * @return True if the game is over, false otherwise.
+     */
     public boolean gameOver() {
         if (players.size() == 1) {
             return true;
@@ -341,32 +485,33 @@ public class Monopoly {
         return false;
     }
 
-
-    public Player getTurn() {
-        hasRolled = false;
-        hasRolledDouble = false;
-
-        if (playerHasBeenRemoved) {
-            turn = turn % players.size();
-            playerHasBeenRemoved = false;
-        } else {
-            turn = (turn + 1) % players.size();
-        }
-
-        return players.get(turn);
-    }
-
-
+    /**
+     * Shows the properties owned by the player.
+     *
+     * @param player The player whose properties to display.
+     * @return The list of properties owned by the player.
+     */
     public static ArrayList<Property> showProperties(Player player) {
         return player.getPlayerProperties();
     }
 
+    /**
+     * Prints the names and number of houses of properties in the given list.
+     *
+     * @param arrayList The list of properties to print.
+     */
     public void print(ArrayList<Property> arrayList) {
         for (int i = 0; i < arrayList.size(); i++) {
             System.out.println(arrayList.get(i).getName() + arrayList.get(i).getNumberOfHouses());
         }
     }
 
+    /**
+     * Checks and returns properties owned by the player that can be built on.
+     *
+     * @param player The player to check for properties.
+     * @return The list of properties owned by the player that can be built on.
+     */
     public static ArrayList<Property> checkSameColorProps(Player player) {
         ArrayList<Property> sameColorProps = new ArrayList<>();
         for (Property prop : player.getPlayerProperties()) {
@@ -377,6 +522,12 @@ public class Monopoly {
         return sameColorProps;
     }
 
+    /**
+     * Checks and returns properties owned by the player that are not under mortgage.
+     *
+     * @param player The player to check for properties.
+     * @return The list of properties owned by the player that are not under mortgage.
+     */
     public static ArrayList<Property> checkNotUnderMortgage(Player player) {
         ArrayList<Property> notUnderMortgage = new ArrayList<>();
         for (Property prop : player.getPlayerProperties()) {
@@ -387,6 +538,12 @@ public class Monopoly {
         return notUnderMortgage;
     }
 
+    /**
+     * Checks and returns properties owned by the player that are under mortgage.
+     *
+     * @param player The player to check for properties.
+     * @return The list of properties owned by the player that are under mortgage.
+     */
     public static ArrayList<Property> checkUnderMortgage(Player player) {
         ArrayList<Property> mortgageProps = new ArrayList<>();
         for (Property prop : player.getPlayerProperties()) {
@@ -398,6 +555,12 @@ public class Monopoly {
         return mortgageProps;
     }
 
+    /**
+     * Checks and returns properties owned by the player that are elevators.
+     *
+     * @param player The player to check for properties.
+     * @return The list of elevator properties owned by the player.
+     */
     public static ArrayList<Property> ElevatorChecker(Player player) {
         ArrayList<Property> elevators = new ArrayList<>();
         for (Property prop : player.getPlayerProperties()) {
