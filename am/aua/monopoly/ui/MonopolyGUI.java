@@ -26,109 +26,70 @@ public class MonopolyGUI extends JFrame {
 
     private static final ArrayList<int[]> POSITIONS = initializePositions();
 
-    public void run(){
+    public void run() {
+        initializeGame();
         setTitle("Monopoly Game");
         loadBoard();
-        initializeGame();
         initializeUI();
         updatePlayerInfo();
-        frame.setSize(new Dimension(1000, 800));
+        frame.setSize(new Dimension(1100, 800));
         frame.setResizable(false);
-
     }
 
     private static ArrayList<int[]> initializePositions() {
         ArrayList<int[]> positions = new ArrayList<>();
-
-        int boardSize = 600; // Size of the board
-        int numSpacesPerSide = 10; // Number of spaces per side, excluding corners
-
-        // Define corner and regular tile sizes
-        int cornerSize = boardSize / (numSpacesPerSide + 1); // Larger corner tiles
-        int tileSize = (boardSize - 2 * cornerSize) / numSpacesPerSide; // Remaining space divided by the number of tiles
-
-        // Start at the bottom right corner (Go)
+        int boardSize = 600;
+        int numSpacesPerSide = 10;
+        int cornerSize = boardSize / (numSpacesPerSide + 1);
+        int tileSize = (boardSize - 2 * cornerSize) / numSpacesPerSide;
         int startX = boardSize - cornerSize;
         int startY = boardSize - cornerSize;
-
-        // Adjustments
-        int bottomRowAdjustment = -5; // Move left to align properly on the bottom row
-        int topRowAdjustment = 5;     // Move right to align properly on the top row
-
-        // Bottom row, right to left
-        positions.add(new int[]{startX, startY}); // Go (corner)
+        int bottomRowAdjustment = -5;
+        int topRowAdjustment = 5;
+        positions.add(new int[]{startX, startY});
         for (int i = 1; i < numSpacesPerSide; i++) {
             positions.add(new int[]{startX - i * tileSize + bottomRowAdjustment, startY});
         }
-        positions.add(new int[]{cornerSize + bottomRowAdjustment, startY}); // Jail (corner)
-
-        // Left column, bottom to top
+        positions.add(new int[]{cornerSize + bottomRowAdjustment, startY});
         for (int i = 1; i < numSpacesPerSide; i++) {
             positions.add(new int[]{0, startY - i * tileSize});
         }
-        positions.add(new int[]{0, cornerSize}); // Free Parking (corner)
-
-        // Top row, left to right
-        positions.add(new int[]{cornerSize + topRowAdjustment, 0}); // Free Parking (corner)
+        positions.add(new int[]{0, cornerSize});
+        positions.add(new int[]{cornerSize + topRowAdjustment, 0});
         for (int i = 1; i < numSpacesPerSide; i++) {
             positions.add(new int[]{i * tileSize + cornerSize + topRowAdjustment, 0});
         }
-        positions.add(new int[]{startX + topRowAdjustment, 0}); // Go to Jail (corner)
-
-        // Right column, top to bottom
+        positions.add(new int[]{startX + topRowAdjustment, 0});
         for (int i = 1; i < numSpacesPerSide; i++) {
             positions.add(new int[]{startX, i * tileSize + cornerSize});
         }
-
-        // Closing the loop back to the start position (Go)
-        positions.add(new int[]{startX, startY}); // Go (corner, repeated to indicate full loop)
-
+        positions.add(new int[]{startX, startY});
         return positions;
     }
 
-
-
-
-
-
-
     private void loadBoard() {
-        // Load the original image icon
-        ImageIcon originalIcon = new ImageIcon("resources/board1.jpg");  // Ensure path is correct
+        ImageIcon originalIcon = new ImageIcon("resources/board1.jpg");
         Image originalImage = originalIcon.getImage();
-
-        // Scale the image to match the grid size (e.g., 800x800 pixels)
         Image scaledImage = originalImage.getScaledInstance(600, 600, Image.SCALE_SMOOTH);
         monopolyImage = new ImageIcon(scaledImage);
-
-        // Create the label with the scaled image
         imageLabel = new JLabel(monopolyImage);
-        imageLabel.setBounds(0, 0, 600, 600);  // Ensure these dimensions match the grid size
-
-        // Setup the layered pane
+        imageLabel.setBounds(0, 0, 600, 600);
         layeredPane = new JLayeredPane();
         layeredPane.setPreferredSize(new Dimension(600, 600));
-        layeredPane.add(imageLabel, Integer.valueOf(1));  // Image on top
-
-        // Setup the transparent grid panel
-        boardPanel = new JPanel(new GridLayout(10, 10));  // Adjust grid layout as needed
-        boardPanel.setBounds(0, 0, 600, 600);  // Ensure these dimensions match the image size
+        layeredPane.add(imageLabel, Integer.valueOf(1));
+        boardPanel = new JPanel(new GridLayout(10, 10));
+        boardPanel.setBounds(0, 0, 600, 600);
         boardPanel.setOpaque(false);
-
-        // Add empty panels to the grid to show the grid structure
-        for (int i = 0; i < 100; i++) {  // Adjust count based on grid size
+        for (int i = 0; i < 100; i++) {
             JPanel panel = new JPanel();
             panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             panel.setOpaque(false);
             boardPanel.add(panel);
         }
-
-
-        String[] playerFiles = {"player1.png", "player2.png", "player3.png"};
-        int[] playerPositions = POSITIONS.getFirst();
-
-        for (int i = 0; i < playerFiles.length; i++) {
-            ImageIcon playerIcon = new ImageIcon(playerFiles[i]);
+        String[] playerFiles = {"player1.png", "player2.png", "player3.png", "player4.png", "player5.png"};
+        int[] playerPositions = POSITIONS.get(0);
+        for (int i = 0; i < monopoly.getPlayers().size(); i++) {
+            ImageIcon playerIcon = new ImageIcon("resources/" + playerFiles[i]);
             Image playerImage = playerIcon.getImage();
             Image scaledPlayerImage = playerImage.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
             JLabel playerLabel = new JLabel(new ImageIcon(scaledPlayerImage));
@@ -136,29 +97,45 @@ public class MonopolyGUI extends JFrame {
             layeredPane.add(playerLabel, Integer.valueOf(2));
             playerLabels.add(playerLabel);
         }
-
-        // Add the grid panel to the layered pane behind the image
-        layeredPane.add(boardPanel, Integer.valueOf(0));  // Grid at the bottom
+        layeredPane.add(boardPanel, Integer.valueOf(0));
     }
 
-    public void movePlayer(int playerId, int newX, int newY) {
-        // Retrieve the player's label from a stored reference
+    private void movePlayer(int playerId, int newX, int newY) {
         JLabel playerLabel = playerLabels.get(playerId);
         playerLabel.setBounds(newX, newY, 50, 50);
-
-        // Refresh the display
         playerLabel.revalidate();
         playerLabel.repaint();
     }
 
-
     private void setupInfoPanel() {
-        infoPanel = new JPanel(new GridLayout(3, 1));
-        currentPlayerLabel = new JLabel("Current Player: ");
-        currentBalanceLabel = new JLabel("Balance: ");
+        infoPanel = new JPanel();
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+        infoPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 100, 250)); // Increased padding
+        infoPanel.setBackground(new Color(249, 255, 205)); // Light background color
 
+        currentPlayerLabel = new JLabel("Current Player: " + currentPlayer.getName());
+        currentPlayerLabel.setFont(new Font("Serif", Font.BOLD, 20)); // Larger font size
+        currentPlayerLabel.setForeground(new Color(153, 153, 172));
+        currentPlayerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        currentBalanceLabel = new JLabel("Balance: $" + currentPlayer.getMoney());
+        currentBalanceLabel.setFont(new Font("Serif", Font.PLAIN, 18)); // Slightly larger font
+        currentBalanceLabel.setForeground(new Color(36, 108, 21));
+        currentBalanceLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        infoPanel.add(Box.createVerticalStrut(30)); // Increased vertical spacing
         infoPanel.add(currentPlayerLabel);
+        infoPanel.add(Box.createVerticalStrut(15));
         infoPanel.add(currentBalanceLabel);
+        infoPanel.add(Box.createVerticalStrut(30));
+    }
+
+
+    private JButton createStyledButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("SansSerif", Font.BOLD, 12));
+        button.setBackground(new Color(240, 240, 240)); // Very light gray
+        return button;
     }
 
 
@@ -187,7 +164,7 @@ public class MonopolyGUI extends JFrame {
                 // Inform the player that they cannot roll the dice again
                 JOptionPane.showMessageDialog(frame, "You have already rolled the dice", "Roll Dice", JOptionPane.WARNING_MESSAGE);
             }
-        }else  JOptionPane.showMessageDialog(frame, "Game Over" + currentPlayer.getName() + " Won!", "Over", JOptionPane.WARNING_MESSAGE);
+        }else  JOptionPane.showMessageDialog(frame, "Game Over " + currentPlayer.getName() + " Won!", "Over", JOptionPane.WARNING_MESSAGE);
     }
 
 
@@ -254,6 +231,7 @@ public class MonopolyGUI extends JFrame {
                     try {
                         monopoly.teleport(currentPlayer, railroadProperties.get(selectedPropertyIndex));
                         JOptionPane.showMessageDialog(frame, "Teleported to " + railroadProperties.get(selectedPropertyIndex).getName(), "Teleport Successful", JOptionPane.INFORMATION_MESSAGE);
+                        movePlayer(monopoly.getPlayers().indexOf(currentPlayer), POSITIONS.get(currentPlayer.getPosition())[0], POSITIONS.get(currentPlayer.getPosition())[1]);
                     } catch (InvalidTeleportLocationException e) {
                         JOptionPane.showMessageDialog(frame, "Error teleporting: " + e.getMessage(), "Teleport Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -416,19 +394,26 @@ public class MonopolyGUI extends JFrame {
 
 
     private void setupControlPanel() {
-        controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        rollDiceButton = new JButton("Roll Dice");
-        buyButton = new JButton("Buy");
-        sellButton = new JButton("Sell");
-        teleportButton = new JButton("Teleport");
-        buildButton = new JButton("Build");
-        mortgageButton = new JButton("Mortgage");
-        demortgageButton = new JButton("De-Mortgage");
-        showPropertiesButton = new JButton("My Properties");
-        nextTurnButton = new JButton("Next Turn");
-        quitButton = new JButton("Quit Game");
+        controlPanel = new JPanel();
+        controlPanel.setLayout(new GridLayout(2, 5, 10, 10)); // Set the grid to have two rows and five columns
+        controlPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        controlPanel.setBackground(new Color(195, 194, 194)); // Pale turquoise background
 
+        // Create and add buttons to the panel using the `createStyledButton` method
+        rollDiceButton = createStyledButton("Roll Dice");
+        buyButton = createStyledButton("Buy");
+        sellButton = createStyledButton("Sell");
+        teleportButton = createStyledButton("Teleport");
+        buildButton = createStyledButton("Build");
+        mortgageButton = createStyledButton("Mortgage");
+        demortgageButton = createStyledButton("De-Mortgage");
+        showPropertiesButton = createStyledButton("My Properties");
+        nextTurnButton = createStyledButton("Next Turn");
+        quitButton = createStyledButton("Quit");
+
+        // Add buttons to the control panel
         controlPanel.add(rollDiceButton);
+        controlPanel.add(nextTurnButton);
         controlPanel.add(buyButton);
         controlPanel.add(sellButton);
         controlPanel.add(teleportButton);
@@ -436,7 +421,6 @@ public class MonopolyGUI extends JFrame {
         controlPanel.add(mortgageButton);
         controlPanel.add(demortgageButton);
         controlPanel.add(showPropertiesButton);
-        controlPanel.add(nextTurnButton);
         controlPanel.add(quitButton);
 
         rollDiceButton.addActionListener(e -> handleRollDice());
@@ -454,8 +438,8 @@ public class MonopolyGUI extends JFrame {
     private void initializeUI() {
         frame = new JFrame("Monopoly Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 800);
-        frame.setLayout(new BorderLayout());
+        frame.setSize(900, 900);  // Slightly larger to accommodate better layout
+        frame.setLayout(new BorderLayout(10, 10));  // Gaps between components
         frame.add(layeredPane, BorderLayout.CENTER);
         setupControlPanel();
         setupInfoPanel();
@@ -463,6 +447,7 @@ public class MonopolyGUI extends JFrame {
         frame.add(infoPanel, BorderLayout.EAST);
         frame.setVisible(true);
     }
+
 
 
     private void initializeGame() {

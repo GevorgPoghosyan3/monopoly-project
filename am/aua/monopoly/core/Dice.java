@@ -25,22 +25,6 @@ public class Dice {
         return dice1 + dice2;
     }
 
-//    public static boolean checkSpeeding() {
-////        if (doubleCounter == 3) {
-////            for (int i = 0; i < diceValues.size(); i++) {
-////                if (diceValues.get(0). && diceValues.get(1) == diceValues.get(2)) {
-////                    diceValues.remove(0);
-////                    return true;
-////                }
-////            }
-////        } return false;
-//
-//        if(doubleCounter == 3) {
-//            return true;
-//        }
-//
-//        return false;
-//    }
 
     // Method to check if the two dice are the same
     public static boolean isDouble() {

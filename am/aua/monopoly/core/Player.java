@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class Player {
     public enum Type {
-        CAT, CAR, BOOT, IRON, HAT, SHIP, MONEYBAG, BALL;
+        CAR, HAT, SHIP, BOOT, IRON;
     }
     private Type playerType;
     private int money;

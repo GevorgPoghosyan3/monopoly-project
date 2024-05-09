@@ -20,7 +20,7 @@ public class Monopoly {
 
     public Monopoly(int numberOfPlayers) throws InvalidNumberOfPlayersException {
         players = new ArrayList<>();
-        if (numberOfPlayers < 2 || numberOfPlayers > 8) {
+        if (numberOfPlayers < 2 || numberOfPlayers > 5) {
             throw new InvalidNumberOfPlayersException();
         } else {
             this.numberOfPLayers = numberOfPlayers;
@@ -118,8 +118,7 @@ public class Monopoly {
             return null;
         } else  if(Board.tileAt(player.getPosition()).getName().equals("CourtRoom")) {
             goToProbation(player);
-//            System.out.println("From Court");
-            return null;
+            return "You were sent to Probation from the Court. GUILTY!";
         } else {
             payRent(player);
 
