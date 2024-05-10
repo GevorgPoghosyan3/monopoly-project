@@ -179,18 +179,6 @@ public class Monopoly {
             player.setMoney(player.getMoney() + 200);
         }
 
-        if ((Board.tileAt(player.getPosition()).getName().equals("Community Chest Tile")) || (Board.tileAt(player.getPosition()).getName().equals("Chance Tile"))) {
-            return getCard(player);
-        } else if (((Board.tileAt(player.getPosition()).getName().equals("Student Service Fee"))) || (Board.tileAt(player.getPosition()).getName().equals("Water Works")) || (Board.tileAt(player.getPosition()).getName().equals("Electricity fee")) || (Board.tileAt(player.getPosition()).getName().equals("Admission Fee"))) {
-            player.setMoney(player.getMoney() + (Board.tileAt(player.getPosition()).getFee()));
-            return null;
-        } else if (Board.tileAt(player.getPosition()).getName().equals("CourtRoom")) {
-            goToProbation(player);
-            return "You were sent to Probation from the Court. GUILTY!";
-        } else {
-            payRent(player);
-
-        }
 
         hasRolled = true;
         hasRolledDouble = Dice.isDouble();
@@ -205,6 +193,21 @@ public class Monopoly {
             diceDoubleCounter = 0;
 //            System.out.println("From 3 times");
         }
+
+        if ((Board.tileAt(player.getPosition()).getName().equals("Community Chest Tile")) || (Board.tileAt(player.getPosition()).getName().equals("Chance Tile"))) {
+            return getCard(player);
+        } else if (((Board.tileAt(player.getPosition()).getName().equals("Student Service Fee"))) || (Board.tileAt(player.getPosition()).getName().equals("Water Works")) || (Board.tileAt(player.getPosition()).getName().equals("Electricity fee")) || (Board.tileAt(player.getPosition()).getName().equals("Admission Fee"))) {
+            player.setMoney(player.getMoney() + (Board.tileAt(player.getPosition()).getFee()));
+            return null;
+        } else if (Board.tileAt(player.getPosition()).getName().equals("CourtRoom")) {
+            goToProbation(player);
+            return "You were sent to Probation from the Court. GUILTY!";
+        } else {
+            payRent(player);
+
+        }
+
+
 
         return null;
     }
