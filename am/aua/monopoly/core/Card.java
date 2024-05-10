@@ -84,7 +84,7 @@ public class Card {
      */
     public static ArrayList<Card> initializeCards() {
         ArrayList<Card> cards = new ArrayList<>();
-        cards.add(new Card(0, "Advance to Go. Collect $200.", 200, 0));
+        cards.add(new Card(0, "Advance to Entrance. Collect $200.", 200, 0));
         cards.add(new Card(1, "Bank error in your favor. Collect $200.", 200));
         cards.add(new Card(1, "Doctor's fees. Pay $50.", -50));
         cards.add(new Card(1, "From sale of stock you get $50.", 50));
