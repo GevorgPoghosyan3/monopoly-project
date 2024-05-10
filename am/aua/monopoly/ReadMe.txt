@@ -7,6 +7,7 @@ Authors: Meri Grigoryan, Armen Mesropyan, Gevorg Poghosyan
 This game is a digital version of the classic board game Monopoly, where players buy and sell properties, build houses and hotels,
 and aim to bankrupt their opponents to become the wealthiest player in the game.
 
+
 Getting Started:
 1. Run the Monopoly game application.
 2. Enter the names of the players participating in the game.
